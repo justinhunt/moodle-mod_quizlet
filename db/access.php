@@ -41,14 +41,14 @@
  * The variable name for the capability definitions array is $capabilities
  *
  * @package    mod_quizletimport
- * @copyright  2011 Your Name
+ * @copyright  2014 Justin Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 $capabilities = array(
-/***************************** remove these comment marks and modify the code as needed
+
 
 	'mod/quizletimport:addinstance' => array(
 			'riskbitmask' => RISK_XSS,
@@ -70,7 +70,7 @@ $capabilities = array(
             'student' => CAP_ALLOW,
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'admin' => CAP_ALLOW
+            'manager' => CAP_ALLOW
         )
     ),
 
@@ -81,7 +81,7 @@ $capabilities = array(
         'legacy' => array(
             'student' => CAP_ALLOW
         )
-    ),
-******************************/
+    )
+
 );
 
