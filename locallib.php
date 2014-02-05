@@ -38,9 +38,7 @@ class quizletimport_quizlet {
 
     /** @var bool flag of login status */
     public $logged=false;
-    //later we eed to get these from settings
-   // public $quizlet_key ="fFCBWXYZSc";
-    //public $quizlet_secret ="QSMAMrrOOMaI0h.LS8axpQ";
+
     public $state ="";
 	
     /**
@@ -50,27 +48,8 @@ class quizletimport_quizlet {
      */
     public function __construct($quizletimport) {
         global $CFG;
-		//print_r($CFG);
 
-       // $this->quizlet_key = $this->get_option('quizlet_key');
-        //$this->quizlet_secret  = $this->get_option('quizlet_secret');
 
-/*
-        if (isset($options['access_key'])) {
-            $this->access_key = $options['access_key'];
-        } else {
-            $this->access_key = get_user_preferences($this->setting.'_access_key', '');
-        }
-        if (isset($options['access_secret'])) {
-            $this->access_secret = $options['access_secret'];
-        } else {
-            $this->access_secret = get_user_preferences($this->setting.'_access_secret', '');
-        }
-
-        if (!empty($this->access_key) && !empty($this->access_secret)) {
-            $this->logged = true;
-        }
-*/
        /* $callbackurl = new moodle_url($CFG->wwwroot.'/mod/quizletimport/quizletcallback.php', array(
             'callback'=>'yes'
             )); */
@@ -94,58 +73,7 @@ class quizletimport_quizlet {
         $this->quizlet = new quizlet($args);
     }
     
-    public function fetch_auth_url(){
-    	$result = $this->quizlet->request_token();
-		$authurl = $result['authorize_url'];
-    	return($authurl);
-    }
-	
-	
-	
 
-
-    /**
-     * Set access key
-     *
-     * @param string $access_key
-     */
-    public function set_access_key($access_key) {
-        $this->access_key = $access_key;
-    }
-
-    /**
-     * Set access secret
-     *
-     * @param string $access_secret
-     */
-    public function set_access_secret($access_secret) {
-        $this->access_secret = $access_secret;
-    }
-
-
-    /**
-     * Check if moodle has got access token and secret
-     *
-     * @return bool
-     */
-    public function check_login() {
-        return !empty($this->logged);
-    }
-
-  
-
-    /**
-     * Request access token
-     *
-     * @return array
-     */
-    public function callback() {
-        $token  = optional_param('oauth_token', '', PARAM_TEXT);
-       // $secret = get_user_preferences($this->setting.'_request_secret', '');
-        $access_token = $this->quizlet->get_access_token($token, $secret);
-        // set_user_preference($this->setting.'_access_key', $access_token['oauth_token']);
-        // set_user_preference($this->setting.'_access_secret', $access_token['oauth_token_secret']);
-    }
 	
 	   /**
      * Set quizlet option
@@ -205,6 +133,9 @@ class quizletimport_quizlet {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quizlet {
+   
+   const ACCESS_TOKEN = "access_token";
+   const ACCESS_USERNAME= "user_id";
    
        /** @var string consumer key, issued by oauth provider*/
     protected $consumer_key;
@@ -276,7 +207,23 @@ class quizlet {
         $this->http_options = array();
     }
     
-    private function fetch_auth_url(){
+	/**
+     * Confirm we are authenticated
+     * 
+     */
+	public function is_authenticated(){
+		if($this->get_stored_data(self::ACCESS_TOKEN) ==null){
+			return false;
+		}else{
+			return true;
+		}
+	}
+	
+	/**
+     * Fetch the intial url for confirming auth to quizlet
+     * 
+     */
+    public function fetch_auth_url(){
 		global $PAGE;
 
     	$thecallbackurl = rawurlencode($this->oauth_callback->out(false));
@@ -297,8 +244,10 @@ class quizlet {
     	
     }
     
-		/**
+	/**
      * Request oauth access token from server
+	 * If this succeeds authentication is done, and it is on 
+	 * to getting data
 	 *
      * @param string $token
      */
@@ -320,7 +269,8 @@ class quizlet {
 	 
 		// Handle return data or error
 		if ($responseCode == 200) { 
-			$this->store_token($returndata['access_token']);
+			$this->store_data(self::ACCESS_TOKEN, $returndata['access_token']);
+			$this->store_data(self::ACCESS_USERNAME, $returndata['user_id']);
 			return $this->fetch_data_return($returndata );
 		}else{
 			return $this->fetch_error_return($returndata );
@@ -375,15 +325,24 @@ class quizlet {
      * @param string $token
      * @param string $secret
      */
-    public function request($params=array()){
-		$ret = $this->fetch_ret();
-		$curl = curl_init("https://api.quizlet.com/2.0/users/{$_SESSION['username']}/sets");
-		curl_setopt($curl, CURLOPT_HTTPHEADER, array('Authorization: Bearer '.$this->get_stored_token()));
+    public function request($endpoint, $params){
+		//build our request URL
+		$apiurl = 'https://api.quizlet.com/2.0/';
+		$endpoint = str_replace('@username@', $this->get_stored_data(self::ACCESS_USERNAME),$endpoint);
+		$useparams='?whitespace=1';
+		if($params){
+			foreach($params  as $key => $value){
+				$useparams .='&';
+				$useparams .= $key . '=' . $value ;
+			}
+		}
+		$curl = curl_init("https://api.quizlet.com/2.0" . $endpoint . $useparams);
+		curl_setopt($curl, CURLOPT_HTTPHEADER, array('Authorization: Bearer '.$this->get_stored_data(self::ACCESS_TOKEN)));
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		$data = json_decode(curl_exec($curl));
 		$responseCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 		curl_close($curl);
-		 
+		 echo "https://api.quizlet.com/2.0" . $endpoint . $useparams;
 		if (floor($responseCode / 100) != 2) { // A non 200-level code is an error (our API typically responds with 200 and 204 on success)
 			return $this->fetch_error_return($data);
 		}else{
@@ -413,8 +372,29 @@ class quizlet {
 		*/
     }
 	
+
+	
 	    /**
-     * Returns the tokenname for the access_token to be stored
+     * Store a token/username between requests. Currently uses
+     * session named by get_storename
+     *
+     * @param stdClass|null $token token object to store or null to clear
+     */
+    protected function store_data($field, $data) {
+        global $SESSION;
+
+        //$this->accesstoken = $token;
+        $name = $this->get_storename($field);
+
+        if ($data !== null) {
+            $SESSION->{$name} = $data;
+        } else {
+            unset($SESSION->{$name});
+        }
+    }
+	
+	    /**
+     * Returns the tokenname/username field for the access_token to be stored
      * through multiple requests.
      *
      * The default implentation is to use the classname combiend
@@ -422,39 +402,20 @@ class quizlet {
      *
      * @return string tokenname for prefernce storage
      */
-    protected function get_tokenname() {
+    protected function get_storename($field) {
         // This is unusual but should work for most purposes.
-        return get_class($this).'-'.md5($this->api_scope);
+        return get_class($this).'-'.md5($this->api_scope) . '-' . $field;
     }
-
-    /**
-     * Store a token between requests. Currently uses
-     * session named by get_tokenname
-     *
-     * @param stdClass|null $token token object to store or null to clear
-     */
-    protected function store_token($token) {
-        global $SESSION;
-
-        $this->accesstoken = $token;
-        $name = $this->get_tokenname();
-
-        if ($token !== null) {
-            $SESSION->{$name} = $token;
-        } else {
-            unset($SESSION->{$name});
-        }
-    }
-
-    /**
+	
+	/**
      * Retrieve a token stored.
      *
      * @return stdClass|null token object
      */
-    protected function get_stored_token() {
+    protected function get_stored_data($field) {
         global $SESSION;
 
-        $name = $this->get_tokenname();
+         $name = $this->get_storename($field);
 
         if (isset($SESSION->{$name})) {
             return $SESSION->{$name};
@@ -462,17 +423,6 @@ class quizlet {
 
         return null;
     }
-	
-	
-    /*  We prepare the auth url using our client id. The callback will recieve
-    	this request_token as code
-    */
-    public function request_token() {
-    	$result = array();
-    	$result['authorize_url'] = $this->fetch_auth_url();
-    	return $result;
-    }
-    
 
 
     /**

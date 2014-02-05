@@ -87,8 +87,29 @@ if($oauth2code){
 		echo "error<br />";
 		echo $result['error'];
 	}
+}else if($qiq->quizlet->is_authenticated()){
+	echo "we are already authenticated<br />";
+	$endpoint = '/users/@username@/sets';
+	$params = null;
+	/*
+	$params=array();
+	$params['term']='silla';
+	$params['q']='spanish';
+	$endpoint = '/search/sets';
+	*/
+	
+	$result = $qiq->quizlet->request($endpoint,$params);
+	if($result['success']){
+		echo "SUCCESS<br />";
+		print_r($result['data']);
+	}else{
+		echo "FAILURE<br />";
+		echo $result['error'];
+	}
+	
+	
 }else{
-	echo '<a href="' . $qiq->fetch_auth_url() . '">Step 1: Start Authorization</a>';
+	echo '<a href="' . $qiq->quizlet->fetch_auth_url() . '">Step 1: Start Authorization</a>';
 }
 // Finish the page
 echo $OUTPUT->footer();
