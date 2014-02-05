@@ -76,6 +76,7 @@ class quizletimport_quizlet {
             )); */
        // $callbackurl = new moodle_url('http://demo.poodll.com/filter/poodll/quizlet.php');
         $callbackurl = new moodle_url($CFG->wwwroot. '/admin/oauth2callback.php');
+
 		
         $this->state = md5(mt_rand().microtime(true)); // CSRF protection
 		 $config = get_config('quizletimport');
@@ -86,6 +87,7 @@ class quizletimport_quizlet {
             'request_token_api' => "https://quizlet.com/authorize",
             'access_token_api' => 'https://api.quizlet.com/oauth/token',
             'oauth_callback' => $callbackurl->out(false),
+			'api_scope' => 'read%20write_set',
             'api_root' => 'https://api.quizlet.com/oauth'
         );
 
@@ -221,6 +223,8 @@ class quizlet {
     protected $http;
     /** @var array options to pass to the next curl request */
     protected $http_options;
+	
+	protected $api_scope;
     /**
      * Constructor for dropbox class
      *
@@ -262,21 +266,31 @@ class quizlet {
         if (!empty($args['access_token_secret'])) {
             $this->access_token_secret = $args['access_token_secret'];
         }
+		if (empty($args['api_scope'])) {
+			$this->api_scope ="read%20write_set";
+		}else{
+            $this->api_scope = $args['api_scope'];
+        }
+		
         $this->http = new curl(array('debug'=>false));
         $this->http_options = array();
     }
     
     private function fetch_auth_url(){
 		global $PAGE;
-    	$scope = "read%20write_set";
+
     	$thecallbackurl = rawurlencode($this->oauth_callback->out(false));
-    	$truestate = md5(mt_rand().microtime(true));
-		//later we should add the true state into the urlstate
-		//of use our own callback code based on /admin/oauth2callback.php to
-		//confirm state is truly ok
-		$urlstate = $PAGE->url->out(false);
-    	$ret = $this->authorize_url . "?state={$urlstate}" . 
-    			"&client_id={$this->consumer_key}&scope={$scope}" .
+
+		//This is a bit complex
+		//oauth lib for moodle sends the final redirect url as "state" variable
+		//the actual security check is done by getting the sessparam from that
+		//see /admin/oauth2callback.php to see how it happens.
+		$urlstate = $PAGE->url;
+		$urlstate->param('sesskey', sesskey());
+		$urlstatestring = rawurlencode($urlstate->out(false));
+		
+    	$ret = $this->authorize_url . "?state={$urlstatestring}" . 
+    			"&client_id={$this->consumer_key}&scope={$this->api_scope}" .
     			"&response_type=code&redirect_uri={$thecallbackurl}";
     			
     	return $ret;		
@@ -291,25 +305,25 @@ class quizlet {
     public function get_access_token($token) {
 	
 		$payload = array(
-			'code' => $_GET['code'],
+			'code' => $token,
 			'redirect_uri' => $this->oauth_callback->out(false),
 			'grant_type' => 'authorization_code'
 		);
-		$curl = curl_init($tokenUrl);
+		$curl = curl_init($this->access_token_api);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl, CURLOPT_USERPWD, "{$this->consumer_key}:{$this->consumer_secret}");
 		curl_setopt($curl, CURLOPT_POST, true);
 		curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
-		$token = json_decode(curl_exec($curl), true);
+		$returndata = json_decode(curl_exec($curl), true);
 		$responseCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 		curl_close($curl);
 	 
 		// Handle return data or error
 		if ($responseCode == 200) { 
-			$this->store_token($token['access_token']);
-			return $this->fetch_data_return($token);
+			$this->store_token($returndata['access_token']);
+			return $this->fetch_data_return($returndata );
 		}else{
-			return $this->fetch_error_return($token);
+			return $this->fetch_error_return($returndata );
 		}
 	 
 		
@@ -352,6 +366,7 @@ class quizlet {
 		$ret['success'] = true;
 		$ret['data'] = $data;
 		$ret['error'] = '';
+		return $ret;
 	}
 	   /**
      * Request oauth protected resources
@@ -409,7 +424,7 @@ class quizlet {
      */
     protected function get_tokenname() {
         // This is unusual but should work for most purposes.
-        return get_class($this).'-'.md5($this->scope);
+        return get_class($this).'-'.md5($this->api_scope);
     }
 
     /**
