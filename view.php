@@ -34,6 +34,7 @@ require_once(dirname(__FILE__).'/locallib.php');
 
 $id = optional_param('id', 0, PARAM_INT); // course_module ID, or
 $n  = optional_param('n', 0, PARAM_INT);  // quizletimport instance ID - it should be named as the first character of the module
+$oauth2code = optional_param('oauth2code', 0, PARAM_RAW); //an oauth2 code recieved from quizlet via callback at /admin/oauth2callback.php
 
 if ($id) {
     $cm         = get_coursemodule_from_id('quizletimport', $id, 0, false, MUST_EXIST);
@@ -73,8 +74,21 @@ if ($quizletimport->intro) { // Conditions to show the intro can change to look 
 
 // Replace the following lines with your own code
 echo $OUTPUT->heading('Yay! It works!');
-$qiq  = new quizletimport_quizlet();
-echo '<a href="' . $qiq->fetch_auth_url() . '">Step 1: Start Authorization</a>';
 
+// DO oauth2 stuff
+$qiq  = new quizletimport_quizlet($quizletimport);
+if($oauth2code){
+	$quizlet = $qiq->quizlet;
+	$result  = $quizlet->get_access_token($oauth2code);
+	if($result['success']){
+		echo "we could get an access token<br />";
+		print_r($result['data']);
+	}else{
+		echo "error<br />";
+		echo $result['error'];
+	}
+}else{
+	echo '<a href="' . $qiq->fetch_auth_url() . '">Step 1: Start Authorization</a>';
+}
 // Finish the page
 echo $OUTPUT->footer();

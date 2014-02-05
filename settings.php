@@ -43,5 +43,11 @@ if ($ADMIN->fulltree) {
  
     $settings->add(new admin_setting_configcheckbox('quizletimport/printheading',
         get_string('printheading', 'quizletimport'), get_string('printheadingexplain', 'quizletimport'), 1));
+		
+	  $settings->add(new admin_setting_configtext('quizletimport/apikey',
+        get_string('apikey', 'quizletimport'), get_string('apikeyexplain', 'quizletimport'), 'YOUR API KEY', PARAM_TEXT));
+		
+	 $settings->add(new admin_setting_configtext('quizletimport/apisecret',
+        get_string('apisecret', 'quizletimport'), get_string('apisecretexplain', 'quizletimport'), 'YOUR API SECRET', PARAM_TEXT));
 
 }

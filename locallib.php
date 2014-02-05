@@ -39,8 +39,8 @@ class quizletimport_quizlet {
     /** @var bool flag of login status */
     public $logged=false;
     //later we eed to get these from settings
-    public $quizlet_key ="fFCBWXYZSc";
-    public $quizlet_secret ="QSMAMrrOOMaI0h.LS8axpQ";
+   // public $quizlet_key ="fFCBWXYZSc";
+    //public $quizlet_secret ="QSMAMrrOOMaI0h.LS8axpQ";
     public $state ="";
 	
     /**
@@ -48,8 +48,9 @@ class quizletimport_quizlet {
      *
      * @param array $options
      */
-    public function __construct($options = array()) {
+    public function __construct($quizletimport) {
         global $CFG;
+		//print_r($CFG);
 
        // $this->quizlet_key = $this->get_option('quizlet_key');
         //$this->quizlet_secret  = $this->get_option('quizlet_secret');
@@ -73,13 +74,14 @@ class quizletimport_quizlet {
        /* $callbackurl = new moodle_url($CFG->wwwroot.'/mod/quizletimport/quizletcallback.php', array(
             'callback'=>'yes'
             )); */
-        $callbackurl = new moodle_url('http://demo.poodll.com/filter/poodll/quizlet.php');
-            
+       // $callbackurl = new moodle_url('http://demo.poodll.com/filter/poodll/quizlet.php');
+        $callbackurl = new moodle_url($CFG->wwwroot. '/admin/oauth2callback.php');
+		
         $this->state = md5(mt_rand().microtime(true)); // CSRF protection
-
+		 $config = get_config('quizletimport');
         $args = array(
-            'oauth_consumer_key'=>$this->quizlet_key,
-            'oauth_consumer_secret'=>$this->quizlet_secret,
+            'oauth_consumer_key'=>$config->apikey,
+            'oauth_consumer_secret'=>$config->apisecret,
             'authorize_url' => "https://quizlet.com/authorize",
             'request_token_api' => "https://quizlet.com/authorize",
             'access_token_api' => 'https://api.quizlet.com/oauth/token',
@@ -95,6 +97,10 @@ class quizletimport_quizlet {
 		$authurl = $result['authorize_url'];
     	return($authurl);
     }
+	
+	
+	
+
 
     /**
      * Set access key
@@ -184,33 +190,92 @@ class quizletimport_quizlet {
 
 
 /**
- * Authentication class to access Dropbox API
+ * Authentication class to access Quizlet API
+ * originally extended oauth_helper, but it was not so helpful
+ * quizlet oauth works differently to facebook/google in some ways
+ * i)The initial request url for an oauth_token can be made very simply
+ * ii) quizlet uses http basic auth in request for access_token, facebook etc doesnt
+ * iii) quizlet uses access token and username in data requests, facebook etc use access_token and secrets
+ * 
  *
  * @package    quizlet_inport
  * @copyright  2014 Justin Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quizlet extends oauth_helper {
+class quizlet {
    
-    /** @var string dropbox api url*/
-   // private $dropbox_api = 'https://api.quizlet.com';
-    /** @var string dropbox content api url*/
-  //  private $dropbox_content_api = 'https://api.quizlet.com';
-
+       /** @var string consumer key, issued by oauth provider*/
+    protected $consumer_key;
+    /** @var string consumer secret, issued by oauth provider*/
+    protected $consumer_secret;
+    /** @var string oauth root*/
+    protected $api_root;
+    /** @var string request token url*/
+    protected $request_token_api;
+    /** @var string authorize url*/
+    protected $authorize_url;
+    protected $http_method;
+    /** @var string */
+    protected $access_token_api;
+    /** @var curl */
+    protected $http;
+    /** @var array options to pass to the next curl request */
+    protected $http_options;
     /**
      * Constructor for dropbox class
      *
      * @param array $args
      */
     function __construct($args) {
-        parent::__construct($args);
+       if (!empty($args['api_root'])) {
+            $this->api_root = $args['api_root'];
+        } else {
+            $this->api_root = '';
+        }
+        $this->consumer_key = $args['oauth_consumer_key'];
+        $this->consumer_secret = $args['oauth_consumer_secret'];
+
+        if (empty($args['request_token_api'])) {
+            $this->request_token_api = $this->api_root . '/request_token';
+        } else {
+            $this->request_token_api = $args['request_token_api'];
+        }
+
+        if (empty($args['authorize_url'])) {
+            $this->authorize_url = $this->api_root . '/authorize';
+        } else {
+            $this->authorize_url = $args['authorize_url'];
+        }
+
+        if (empty($args['access_token_api'])) {
+            $this->access_token_api = $this->api_root . '/access_token';
+        } else {
+            $this->access_token_api = $args['access_token_api'];
+        }
+
+        if (!empty($args['oauth_callback'])) {
+            $this->oauth_callback = new moodle_url($args['oauth_callback']);
+        }
+        if (!empty($args['access_token'])) {
+            $this->access_token = $args['access_token'];
+        }
+        if (!empty($args['access_token_secret'])) {
+            $this->access_token_secret = $args['access_token_secret'];
+        }
+        $this->http = new curl(array('debug'=>false));
+        $this->http_options = array();
     }
     
     private function fetch_auth_url(){
+		global $PAGE;
     	$scope = "read%20write_set";
     	$thecallbackurl = rawurlencode($this->oauth_callback->out(false));
-    	$state = md5(mt_rand().microtime(true));
-    	$ret = $this->authorize_url . "?state={$state}" . 
+    	$truestate = md5(mt_rand().microtime(true));
+		//later we should add the true state into the urlstate
+		//of use our own callback code based on /admin/oauth2callback.php to
+		//confirm state is truly ok
+		$urlstate = $PAGE->url->out(false);
+    	$ret = $this->authorize_url . "?state={$urlstate}" . 
     			"&client_id={$this->consumer_key}&scope={$scope}" .
     			"&response_type=code&redirect_uri={$thecallbackurl}";
     			
@@ -218,12 +283,178 @@ class quizlet extends oauth_helper {
     	
     }
     
+		/**
+     * Request oauth access token from server
+	 *
+     * @param string $token
+     */
+    public function get_access_token($token) {
+	
+		$payload = array(
+			'code' => $_GET['code'],
+			'redirect_uri' => $this->oauth_callback->out(false),
+			'grant_type' => 'authorization_code'
+		);
+		$curl = curl_init($tokenUrl);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($curl, CURLOPT_USERPWD, "{$this->consumer_key}:{$this->consumer_secret}");
+		curl_setopt($curl, CURLOPT_POST, true);
+		curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
+		$token = json_decode(curl_exec($curl), true);
+		$responseCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+		curl_close($curl);
+	 
+		// Handle return data or error
+		if ($responseCode == 200) { 
+			$this->store_token($token['access_token']);
+			return $this->fetch_data_return($token);
+		}else{
+			return $this->fetch_error_return($token);
+		}
+	 
+		
+		//$accessToken = $token['access_token'];
+		//$username = $token['user_id']; // the API sends back the username of the user in the access token
+		
+
+	/*
+        $this->sign_secret = $this->consumer_secret.'&'.$secret;
+        $params = $this->prepare_oauth_parameters($this->access_token_api, array('oauth_token'=>$token, 'oauth_verifier'=>$verifier), 'POST');
+        $this->setup_oauth_http_header($params);
+        // Should never send the callback in this request.
+        unset($params['oauth_callback']);
+        $content = $this->http->post($this->access_token_api, $params, $this->http_options);
+        $keys = $this->parse_result($content);
+        $this->set_access_token($keys['oauth_token'], $keys['oauth_token_secret']);
+        return $keys;
+		*/
+    }
+	
+	private function fetch_error_return($data){
+		$ret = array();
+		$ret['success'] = false;
+		$ret['data'] = null;
+		if(!$data){
+			$ret['error'] = "an unknown error occurred. Nothing recieved from quizlet.";
+			return $ret;
+		}
+		if(!$data['error']){
+			$ret['error'] = 'Error code: ' . $data['error'] ;
+		}
+		if(!$data['error_description']){
+			$ret['error'] = $ret['error'] . ': Description: ' . $data['error_description'] ;
+		}
+		return $ret;
+	}
+	
+	private function fetch_data_return($data){
+		$ret = array();
+		$ret['success'] = true;
+		$ret['data'] = $data;
+		$ret['error'] = '';
+	}
+	   /**
+     * Request oauth protected resources
+     * @param string $method
+     * @param string $url
+     * @param string $token
+     * @param string $secret
+     */
+    public function request($params=array()){
+		$ret = $this->fetch_ret();
+		$curl = curl_init("https://api.quizlet.com/2.0/users/{$_SESSION['username']}/sets");
+		curl_setopt($curl, CURLOPT_HTTPHEADER, array('Authorization: Bearer '.$this->get_stored_token()));
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		$data = json_decode(curl_exec($curl));
+		$responseCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+		curl_close($curl);
+		 
+		if (floor($responseCode / 100) != 2) { // A non 200-level code is an error (our API typically responds with 200 and 204 on success)
+			return $this->fetch_error_return($data);
+		}else{
+			return $this->fetch_data_return($data);
+		}
+	
+		/*
+        if (empty($token)) {
+            $token = $this->access_token;
+        }
+        if (empty($secret)) {
+            $secret = $this->access_token_secret;
+        }
+        // to access protected resource, sign_secret will alwasy be consumer_secret+token_secret
+        $this->sign_secret = $this->consumer_secret.'&'.$secret;
+        if (strtolower($method) === 'post' && !empty($params)) {
+            $oauth_params = $this->prepare_oauth_parameters($url, array('oauth_token'=>$token) + $params, $method);
+        } else {
+            $oauth_params = $this->prepare_oauth_parameters($url, array('oauth_token'=>$token), $method);
+        }
+        $this->setup_oauth_http_header($oauth_params);
+        $content = call_user_func_array(array($this->http, strtolower($method)), array($url, $params, $this->http_options));
+        // reset http header and options to prepare for the next request
+        $this->http->resetHeader();
+        // return request return value
+        return $content;
+		*/
+    }
+	
+	    /**
+     * Returns the tokenname for the access_token to be stored
+     * through multiple requests.
+     *
+     * The default implentation is to use the classname combiend
+     * with the scope.
+     *
+     * @return string tokenname for prefernce storage
+     */
+    protected function get_tokenname() {
+        // This is unusual but should work for most purposes.
+        return get_class($this).'-'.md5($this->scope);
+    }
+
+    /**
+     * Store a token between requests. Currently uses
+     * session named by get_tokenname
+     *
+     * @param stdClass|null $token token object to store or null to clear
+     */
+    protected function store_token($token) {
+        global $SESSION;
+
+        $this->accesstoken = $token;
+        $name = $this->get_tokenname();
+
+        if ($token !== null) {
+            $SESSION->{$name} = $token;
+        } else {
+            unset($SESSION->{$name});
+        }
+    }
+
+    /**
+     * Retrieve a token stored.
+     *
+     * @return stdClass|null token object
+     */
+    protected function get_stored_token() {
+        global $SESSION;
+
+        $name = $this->get_tokenname();
+
+        if (isset($SESSION->{$name})) {
+            return $SESSION->{$name};
+        }
+
+        return null;
+    }
+	
+	
     /*  We prepare the auth url using our client id. The callback will recieve
     	this request_token as code
     */
     public function request_token() {
     	$result = array();
-    	$result['authorize_url'] = fetch_auth_url();
+    	$result['authorize_url'] = $this->fetch_auth_url();
     	return $result;
     }
     

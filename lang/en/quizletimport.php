@@ -44,3 +44,8 @@ $string['configdisplayoptions'] = 'qi cfg display options';
 $string['printheading'] = 'qi printheading';
 $string['printheadingexplain'] = 'qi printheading expl';
 
+$string['apikey'] = 'API Key';
+$string['apisecret'] = 'API Secret';
+$string['apikeyexplain'] = 'This can be generated over at quizlet.com';
+$string['apisecretexplain'] = 'This can be generated over at quizlet.com';
+
