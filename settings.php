@@ -49,5 +49,50 @@ if ($ADMIN->fulltree) {
 		
 	 $settings->add(new admin_setting_configtext('quizletimport/apisecret',
         get_string('apisecret', 'quizletimport'), get_string('apisecretexplain', 'quizletimport'), 'YOUR API SECRET', PARAM_TEXT));
+	
+	//flashcards dimensions
+    $settings->add(new admin_setting_heading('quizletimport/flashcardsdimensions', get_string('acttype_flashcards', 'quizletimport'), ''));
+	$settings->add(new admin_setting_configtext('quizletimport/flashcardswidth', 
+			get_string('width', 'quizletimport'), '', '100%', PARAM_TEXT));
+	$settings->add(new admin_setting_configtext('quizletimport/flashcardsheight', 
+			get_string('height', 'quizletimport'), '', '410', PARAM_INT));
+	
+	//scatter dimensions		
+	 $settings->add(new admin_setting_heading('quizletimport/scatterdimensions', get_string('acttype_scatter', 'quizletimport'), ''));
+	$settings->add(new admin_setting_configtext('quizletimport/scatterwidth', 
+			get_string('width', 'quizletimport'), '', '100%', PARAM_TEXT));
+	$settings->add(new admin_setting_configtext('quizletimport/scatterheight', 
+			get_string('height', 'quizletimport'), '', '410', PARAM_INT));
+	
+	//learn dimensions		
+	$settings->add(new admin_setting_heading('quizletimport/learndimensions', get_string('acttype_learn', 'quizletimport'), ''));
+	$settings->add(new admin_setting_configtext('quizletimport/learnwidth', 
+			get_string('width', 'quizletimport'), '', '100%', PARAM_TEXT));
+	$settings->add(new admin_setting_configtext('quizletimport/learnheight', 
+			get_string('height', 'quizletimport'), '', '410', PARAM_INT));
+	
+	//spelling dimensions		
+	$settings->add(new admin_setting_heading('quizletimport/spellerdimensions', get_string('acttype_speller', 'quizletimport'), ''));
+	$settings->add(new admin_setting_configtext('quizletimport/spellerwidth', 
+			get_string('width', 'quizletimport'), '', '100%', PARAM_TEXT));
+	$settings->add(new admin_setting_configtext('quizletimport/spellerheight', 
+			get_string('height', 'quizletimport'), '', '410', PARAM_INT));
+	
+	//spacerace dimensions		
+	$settings->add(new admin_setting_heading('quizletimport/spaceracedimensions', get_string('acttype_spacerace', 'quizletimport'), ''));
+	$settings->add(new admin_setting_configtext('quizletimport/spaceracewidth', 
+			get_string('width', 'quizletimport'), '', '100%', PARAM_TEXT));
+	$settings->add(new admin_setting_configtext('quizletimport/spaceraceheight', 
+			get_string('height', 'quizletimport'), '', '410', PARAM_INT));
+			
+	//test dimensions		
+	$settings->add(new admin_setting_heading('quizletimport/testdimensions', get_string('acttype_test', 'quizletimport'), ''));
+	$settings->add(new admin_setting_configtext('quizletimport/testwidth', 
+			get_string('width', 'quizletimport'), '', '100%', PARAM_TEXT));
+	$settings->add(new admin_setting_configtext('quizletimport/testheight', 
+			get_string('height', 'quizletimport'), '', '410', PARAM_INT));
+	
+	
+	
 
 }

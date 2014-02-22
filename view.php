@@ -51,19 +51,23 @@ if ($id) {
 require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 
+//this is important cos we use this to figure out how long student was on page
 add_to_log($course->id, 'quizletimport', 'view', "view.php?id={$cm->id}", $quizletimport->name, $cm->id);
 
-/// Print the page header
 
+/// Print the page header
 $PAGE->set_url('/mod/quizletimport/view.php', array('id' => $cm->id));
 $PAGE->set_title(format_string($quizletimport->name));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($context);
 
+
 // other things you may want to set - remove if not needed
 //$PAGE->set_cacheable(false);
 //$PAGE->set_focuscontrol('some-html-id');
 //$PAGE->add_body_class('quizletimport-'.$somevar);
+
+
 
 // Output starts here
 echo $OUTPUT->header();
@@ -72,44 +76,55 @@ if ($quizletimport->intro) { // Conditions to show the intro can change to look 
     echo $OUTPUT->box(format_module_intro('quizletimport', $quizletimport, $cm->id), 'generalbox mod_introbox', 'quizletimportintro');
 }
 
+//init or timer if we have a min time
+//if ($quizletimport->mintime){
+   $options = array($quizletimport->mintime,$cm->id);
+   $PAGE->requires->js_init_call('M.mod_quizletimport.timer.init', $options, false);
+	//$quizletimport->initialise_timer($quizletimport->mintime,$cm->id);
+//}
+
+
 // Replace the following lines with your own code
 echo $OUTPUT->heading('Yay! It works!');
-
-// DO oauth2 stuff
+/*
+// DO oauth2 and quizlet stuff
 $qiq  = new quizletimport_quizlet($quizletimport);
-if($oauth2code){
+$qmessage = false;
+if($qiq->quizlet->is_authenticated()){
+	$endpoint = '/users/@username@/sets';
+	$params = null;
+
+	$mysets = $qiq->quizlet->request($endpoint,$params);
+	if($mysets['success']){
+		print_r($mysets['data']);
+	}else{
+		$qmessage =  $mysets['error'];
+	}
+}else if($oauth2code){
 	$quizlet = $qiq->quizlet;
 	$result  = $quizlet->get_access_token($oauth2code);
 	if($result['success']){
-		echo "we could get an access token<br />";
 		print_r($result['data']);
 	}else{
-		echo "error<br />";
-		echo $result['error'];
+		$qmessage = $result['error'];
 	}
-}else if($qiq->quizlet->is_authenticated()){
-	echo "we are already authenticated<br />";
-	$endpoint = '/users/@username@/sets';
-	$params = null;
-	/*
-	$params=array();
-	$params['term']='silla';
-	$params['q']='spanish';
-	$endpoint = '/search/sets';
-	*/
-	
-	$result = $qiq->quizlet->request($endpoint,$params);
-	if($result['success']){
-		echo "SUCCESS<br />";
-		print_r($result['data']);
-	}else{
-		echo "FAILURE<br />";
-		echo $result['error'];
-	}
-	
-	
 }else{
-	echo '<a href="' . $qiq->quizlet->fetch_auth_url() . '">Step 1: Start Authorization</a>';
+	$qmessage = '<a href="' . $qiq->quizlet->fetch_auth_url() . '">Step 1: Start Authorization</a>';
 }
+
+if($qmessage){
+	echo $qmessage;
+}
+*/
+//print_r($quizletimport);
+ $args = array(
+			'api_scope' => 'read'
+        );
+$qiz  = new quizlet($args);
+
+//display our quizlet activity
+$embedcode = $qiz->fetch_embed_code($quizletimport->quizletset,$quizletimport->activitytype);
+echo $embedcode;
+
 // Finish the page
 echo $OUTPUT->footer();

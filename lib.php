@@ -25,7 +25,7 @@
  * Moodle is performing actions across all modules.
  *
  * @package    mod_quizletimport
- * @copyright  2011 Your Name
+ * @copyright  2011 Justin Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -49,7 +49,7 @@ function quizletimport_supports($feature) {
     switch($feature) {
         case FEATURE_MOD_INTRO:         return true;
         case FEATURE_SHOW_DESCRIPTION:  return true;
-
+    	case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
         default:                        return null;
     }
 }

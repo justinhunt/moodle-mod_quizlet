@@ -36,10 +36,6 @@ require_once($CFG->libdir.'/oauthlib.php');
  */
 class quizletimport_quizlet {
 
-    /** @var bool flag of login status */
-    public $logged=false;
-
-    public $state ="";
 	
     /**
      * Constructor of quizlet plugin
@@ -49,28 +45,21 @@ class quizletimport_quizlet {
     public function __construct($quizletimport) {
         global $CFG;
 
-
-       /* $callbackurl = new moodle_url($CFG->wwwroot.'/mod/quizletimport/quizletcallback.php', array(
-            'callback'=>'yes'
-            )); */
-       // $callbackurl = new moodle_url('http://demo.poodll.com/filter/poodll/quizlet.php');
-        $callbackurl = new moodle_url($CFG->wwwroot. '/admin/oauth2callback.php');
-
-		
-        $this->state = md5(mt_rand().microtime(true)); // CSRF protection
-		 $config = get_config('quizletimport');
         $args = array(
-            'oauth_consumer_key'=>$config->apikey,
-            'oauth_consumer_secret'=>$config->apisecret,
-            'authorize_url' => "https://quizlet.com/authorize",
-            'request_token_api' => "https://quizlet.com/authorize",
-            'access_token_api' => 'https://api.quizlet.com/oauth/token',
-            'oauth_callback' => $callbackurl->out(false),
-			'api_scope' => 'read%20write_set',
-            'api_root' => 'https://api.quizlet.com/oauth'
+			'api_scope' => 'read'
         );
 
         $this->quizlet = new quizlet($args);
+        
+    }
+    
+      /**
+     * Output the JavaScript required to initialise the countdown timer.
+     * @param int $timerstartvalue time remaining, in seconds.
+     */
+    public function initialise_timer($timerstartvalue,$cmid) {
+        $options = array($timerstartvalue,$cmid);
+        $this->page->requires->js_init_call('M.mod_quizletimport.timer.init', $options, false);
     }
     
 
@@ -134,77 +123,54 @@ class quizletimport_quizlet {
  */
 class quizlet {
    
-   const ACCESS_TOKEN = "access_token";
-   const ACCESS_USERNAME= "user_id";
+	const ACCESS_TOKEN = "access_token";
+	const ACCESS_USERNAME= "user_id";
+	const API_URL = 'https://api.quizlet.com/2.0/';
+	const AUTH_URL = 'https://quizlet.com/authorize';
+	const TOKEN_URL = 'https://api.quizlet.com/oauth/token';
+	
+	const TYPE_CARDS = 0;
+	const TYPE_SCATTER = 1;
+	const TYPE_SPACERACE = 2;
+	const TYPE_TEST = 3;
+	const TYPE_SPELLER = 4;
+	const TYPE_LEARN = 5;
+	const TYPE_MOODLE_QUIZ = 6;
    
        /** @var string consumer key, issued by oauth provider*/
     protected $consumer_key;
     /** @var string consumer secret, issued by oauth provider*/
     protected $consumer_secret;
-    /** @var string oauth root*/
-    protected $api_root;
-    /** @var string request token url*/
-    protected $request_token_api;
-    /** @var string authorize url*/
-    protected $authorize_url;
-    protected $http_method;
-    /** @var string */
-    protected $access_token_api;
-    /** @var curl */
-    protected $http;
-    /** @var array options to pass to the next curl request */
-    protected $http_options;
-	
+    /** @var string oauth_callback url*/
+    protected $oauth_callback;
+	/** @var string scope of access to quizlet */
 	protected $api_scope;
+	
     /**
-     * Constructor for dropbox class
+     * Constructor for quizlet class
      *
      * @param array $args
      */
     function __construct($args) {
-       if (!empty($args['api_root'])) {
-            $this->api_root = $args['api_root'];
-        } else {
-            $this->api_root = '';
-        }
-        $this->consumer_key = $args['oauth_consumer_key'];
-        $this->consumer_secret = $args['oauth_consumer_secret'];
+    	
+    	 global $CFG;
 
-        if (empty($args['request_token_api'])) {
-            $this->request_token_api = $this->api_root . '/request_token';
-        } else {
-            $this->request_token_api = $args['request_token_api'];
-        }
 
-        if (empty($args['authorize_url'])) {
-            $this->authorize_url = $this->api_root . '/authorize';
-        } else {
-            $this->authorize_url = $args['authorize_url'];
-        }
-
-        if (empty($args['access_token_api'])) {
-            $this->access_token_api = $this->api_root . '/access_token';
-        } else {
-            $this->access_token_api = $args['access_token_api'];
-        }
-
-        if (!empty($args['oauth_callback'])) {
-            $this->oauth_callback = new moodle_url($args['oauth_callback']);
-        }
-        if (!empty($args['access_token'])) {
-            $this->access_token = $args['access_token'];
-        }
-        if (!empty($args['access_token_secret'])) {
-            $this->access_token_secret = $args['access_token_secret'];
-        }
-		if (empty($args['api_scope'])) {
-			$this->api_scope ="read%20write_set";
-		}else{
-            $this->api_scope = $args['api_scope'];
-        }
+		 $config = get_config('quizletimport');
+         $args = array(
+			'api_scope' => 'read%20write_set',
+        	);
+        
+        	$this->consumer_key = $config->apikey;
+        	$this->consumer_secret = $config->apisecret;
+            $this->oauth_callback = new moodle_url($CFG->wwwroot. '/admin/oauth2callback.php');
+ 
+			if (empty($args['api_scope'])) {
+				$this->api_scope ="read%20write_set";
+			}else{
+				$this->api_scope = $args['api_scope'];
+			}
 		
-        $this->http = new curl(array('debug'=>false));
-        $this->http_options = array();
     }
     
 	/**
@@ -236,7 +202,7 @@ class quizlet {
 		$urlstate->param('sesskey', sesskey());
 		$urlstatestring = rawurlencode($urlstate->out(false));
 		
-    	$ret = $this->authorize_url . "?state={$urlstatestring}" . 
+    	$ret = self::AUTH_URL . "?state={$urlstatestring}" . 
     			"&client_id={$this->consumer_key}&scope={$this->api_scope}" .
     			"&response_type=code&redirect_uri={$thecallbackurl}";
     			
@@ -258,7 +224,7 @@ class quizlet {
 			'redirect_uri' => $this->oauth_callback->out(false),
 			'grant_type' => 'authorization_code'
 		);
-		$curl = curl_init($this->access_token_api);
+		$curl = curl_init(self::TOKEN_URL);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl, CURLOPT_USERPWD, "{$this->consumer_key}:{$this->consumer_secret}");
 		curl_setopt($curl, CURLOPT_POST, true);
@@ -276,22 +242,7 @@ class quizlet {
 			return $this->fetch_error_return($returndata );
 		}
 	 
-		
-		//$accessToken = $token['access_token'];
-		//$username = $token['user_id']; // the API sends back the username of the user in the access token
-		
 
-	/*
-        $this->sign_secret = $this->consumer_secret.'&'.$secret;
-        $params = $this->prepare_oauth_parameters($this->access_token_api, array('oauth_token'=>$token, 'oauth_verifier'=>$verifier), 'POST');
-        $this->setup_oauth_http_header($params);
-        // Should never send the callback in this request.
-        unset($params['oauth_callback']);
-        $content = $this->http->post($this->access_token_api, $params, $this->http_options);
-        $keys = $this->parse_result($content);
-        $this->set_access_token($keys['oauth_token'], $keys['oauth_token_secret']);
-        return $keys;
-		*/
     }
 	
 	private function fetch_error_return($data){
@@ -327,7 +278,6 @@ class quizlet {
      */
     public function request($endpoint, $params){
 		//build our request URL
-		$apiurl = 'https://api.quizlet.com/2.0/';
 		$endpoint = str_replace('@username@', $this->get_stored_data(self::ACCESS_USERNAME),$endpoint);
 		$useparams='?whitespace=1';
 		if($params){
@@ -336,43 +286,24 @@ class quizlet {
 				$useparams .= $key . '=' . $value ;
 			}
 		}
-		$curl = curl_init("https://api.quizlet.com/2.0" . $endpoint . $useparams);
+		$curl = curl_init(self::API_URL . $endpoint . $useparams);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, array('Authorization: Bearer '.$this->get_stored_data(self::ACCESS_TOKEN)));
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		$data = json_decode(curl_exec($curl));
 		$responseCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 		curl_close($curl);
-		 echo "https://api.quizlet.com/2.0" . $endpoint . $useparams;
-		if (floor($responseCode / 100) != 2) { // A non 200-level code is an error (our API typically responds with 200 and 204 on success)
+		
+		 //echo self::API_URL . $endpoint . $useparams;
+		
+		if (floor($responseCode / 100) != 2) { 
+			// A non 200-level code is an error (quizlet API typically responds with 200 and 204 on success)
 			return $this->fetch_error_return($data);
 		}else{
 			return $this->fetch_data_return($data);
 		}
 	
-		/*
-        if (empty($token)) {
-            $token = $this->access_token;
-        }
-        if (empty($secret)) {
-            $secret = $this->access_token_secret;
-        }
-        // to access protected resource, sign_secret will alwasy be consumer_secret+token_secret
-        $this->sign_secret = $this->consumer_secret.'&'.$secret;
-        if (strtolower($method) === 'post' && !empty($params)) {
-            $oauth_params = $this->prepare_oauth_parameters($url, array('oauth_token'=>$token) + $params, $method);
-        } else {
-            $oauth_params = $this->prepare_oauth_parameters($url, array('oauth_token'=>$token), $method);
-        }
-        $this->setup_oauth_http_header($oauth_params);
-        $content = call_user_func_array(array($this->http, strtolower($method)), array($url, $params, $this->http_options));
-        // reset http header and options to prepare for the next request
-        $this->http->resetHeader();
-        // return request return value
-        return $content;
-		*/
-    }
 	
-
+    }
 	
 	    /**
      * Store a token/username between requests. Currently uses
@@ -424,6 +355,62 @@ class quizlet {
         return null;
     }
 
+	/**
+     * Fetch Embed Code
+     *
+     * @return String embed code for quizlet activity
+     */
+	public function fetch_embed_code($quizletset, $activitytype, $useheight=false, $usewidth=false){
+		$iframe = "<iframe src=\"https://quizlet.com/@@quizletset@@/@@type@@/embedv2\" height=\"@@height@@\" width=\"@@width@@\" style=\"border:0;\"></iframe>";
+		$config = get_config('quizletimport');
+		
+		switch($activitytype){
+			
+			case self::TYPE_SCATTER:
+				$height= $config->scatterheight;
+				$width= $config->scatterwidth;
+				$type= "scatter";
+				break;
+			case self::TYPE_SPACERACE:
+				$height= $config->spaceraceheight;
+				$width= $config->spaceracewidth;
+				$type= "spacerace";
+				break;
+			case self::TYPE_TEST:
+				$height= $config->testheight;
+				$width= $config->testwidth;
+				$type= "test";
+				break;
+			case self::TYPE_SPELLER:
+				$height= $config->spellerheight;
+				$width= $config->spellerwidth;
+				$type= "speller";
+				break;
+			case self::TYPE_LEARN:
+				$height= $config->learnheight;
+				$width= $config->learnwidth;
+				$type= "learn";
+				break;
+			
+			case self::TYPE_CARDS:	
+			default:
+				$height= $config->flashcardsheight;
+				$width= $config->flashcardswidth;
+				$type= "flashcards";
+				
+		}
+		
+		//handle any passed in dimensions
+		if($useheight){$height=$useheight;}
+		if($usewidth){$width=$usewidth;}
+		
+		//replace the type, height and width in the iframe template code
+		$iframe = str_replace('@@height@@',$height,$iframe);
+		$iframe = str_replace('@@width@@',$width,$iframe);
+		$iframe = str_replace('@@type@@',$type,$iframe);
+		$iframe = str_replace('@@quizletset@@',$quizletset,$iframe);
+		return $iframe;
+	}
 
     /**
      * Get file listing from dropbox

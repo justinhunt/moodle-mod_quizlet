@@ -29,6 +29,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
+require_once($CFG->dirroot.'/mod/quizletimport/locallib.php');
 
 /**
  * Module instance settings form
@@ -61,9 +62,72 @@ class mod_quizletimport_mod_form extends moodleform_mod {
         $this->add_intro_editor();
 
         //-------------------------------------------------------------------------------
-        // Adding the rest of quizletimport settings, spreeading all them into this fieldset
-        // or adding more fieldsets ('header' elements) if needed for better logic
-        $mform->addElement('static', 'label1', 'quizletimportsetting1', 'Your quizletimport fields go here. Replace me!');
+        //Initialize Quizlet and deal with oauth etc
+        //i  - send off to auth screen
+        //ii - arrive back unauth, but with oauth2code
+        //iii - complete auth by getting access token
+         $args = array(
+			'api_scope' => 'read'
+        );
+		$qiz  = new quizlet($args);
+		$oauth2code = optional_param('oauth2code', 0, PARAM_RAW);
+		$qmessage = false;
+		if(!$qiz->is_authenticated() && $oauth2code){
+			$result  = $qiz->get_access_token($oauth2code);
+			if(!$result['success']){
+				$qmessage = $result['error'];
+			}
+		}
+
+
+		//if authenticated fill our select box with users sets
+		//otherwise show a login/authorize link
+		if($qiz->is_authenticated()){
+			$endpoint = '/users/@username@/sets';
+				$params = null;
+				/*
+				$params=array();
+				$params['term']='silla';
+				$params['q']='spanish';
+				$endpoint = '/search/sets';
+				*/
+	
+				$mysets = $qiz->request($endpoint,$params);
+				if($mysets['success']){
+					$options = array();
+					foreach ($mysets['data'] as $quizletset){
+						$options[$quizletset->id] = $quizletset->title;
+					}
+					//$attributes = array('size'=>5);
+					$select = $mform->addElement('select', 'quizletset', get_string('usersets', 'quizletimport'), $options);
+					$select->setMultiple(false);
+				}else{
+					$qmessage =  $mysets['error'];
+				}
+		}else{
+			 $mform->addElement('static', 'quizletauthorize', get_string('quizletloginlabel', 'quizletimport'), '<a href="' . $qiz->fetch_auth_url() . '">' . get_string('quizletlogin', 'quizletimport') . '</a>');
+		}
+
+		//if along the way we got an error back from quizlet, lets display it.
+		if($qmessage){
+			$mform->addElement('static', 'quizleterror', get_string('quizleterror', 'quizletimport'), $qmessage);
+		}
+		
+		//what kind of quizlet activity are we going to display
+		$activities = array($qiz::TYPE_CARDS => get_string('acttype_flashcards', 'quizletimport'),
+				$qiz::TYPE_SCATTER=>get_string('acttype_scatter', 'quizletimport'),
+				$qiz::TYPE_SPACERACE=>get_string('acttype_spacerace', 'quizletimport'),
+				$qiz::TYPE_TEST=>get_string('acttype_test', 'quizletimport'),
+				$qiz::TYPE_SPELLER=>get_string('acttype_speller', 'quizletimport'),
+				$qiz::TYPE_LEARN=>get_string('acttype_learn', 'quizletimport'),
+				$qiz::TYPE_MOODLE_QUIZ=>get_string('acttype_moodlequiz', 'quizletimport'));
+				
+		$select = $mform->addElement('select', 'activitytype', get_string('activitytype', 'quizletimport'), $activities);
+		
+		//Add a place to set a mimumum time after which the activity is recorded complete
+	   $mform->addElement('duration', 'mintime', get_string('mintime', 'quizletimport'));    
+       $mform->setDefault('mintime',0);
+      
 
         $mform->addElement('header', 'quizletimportfieldset', get_string('quizletimportfieldset', 'quizletimport'));
         $mform->addElement('static', 'label2', 'quizletimportsetting2', 'Your quizletimport fields go here. Replace me!');

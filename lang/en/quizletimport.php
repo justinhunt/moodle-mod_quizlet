@@ -49,3 +49,21 @@ $string['apisecret'] = 'API Secret';
 $string['apikeyexplain'] = 'This can be generated over at quizlet.com';
 $string['apisecretexplain'] = 'This can be generated over at quizlet.com';
 
+$string['usersets'] = 'Users Quizlet Sets';
+$string['quizletloginlabel'] = 'Quizlet Login';
+$string['quizletlogin'] = 'Login and confirm with quizlet to access your quizlet sets';
+$string['quizleterror'] = 'Quizlet Error';
+$string['activitytype'] = 'Activity Type';
+$string['acttype_flashcards'] = 'Flashcards';
+$string['acttype_scatter'] = 'Scatter';
+$string['acttype_speller'] = 'Speller';
+$string['acttype_learn'] = 'Learn';
+$string['acttype_spacerace'] = 'Space Race';
+$string['acttype_test'] = 'Test';
+$string['acttype_moodlequiz'] = 'Moodle Quiz';
+
+$string['mintime'] = 'Minimum Time Required';
+$string['width'] = 'width';
+$string['height'] = 'height';
+
+
