@@ -41,13 +41,19 @@ M.mod_quizletimport.timer = {
      * @param start, the timer starting time, in seconds.
      * @param preview, is this a quiz preview?
      */
-    init: function(Y, start,cmid) {
+    init: function(Y, start,cmid,$completed) {
         M.mod_quizletimport.timer.Y = Y;
         M.mod_quizletimport.timer.endtime = M.pageloadstarttime.getTime() + start*1000;
         M.mod_quizletimport.timer.cmid = cmid;
-        if(start>0){
-        	M.mod_quizletimport.timer.update();
-        	console.log('quizletimport:counting' + start + ":" + M.mod_quizletimport.timer.cmid);
+        if(start>0 && !$completed){
+                Y.one('#quizletimport-timer').setStyle('display', 'block');
+        	Y.one('#quizletimport-completed').setStyle('display', 'none');
+                M.mod_quizletimport.timer.update();
+        	console.log('quizletimport:counting' + start + ":" + M.mod_quizletimport.timer.cmid + ":" + $completeds);
+        }else if($completed){
+          Y.one('#quizletimport-completed').setStyle('display', 'block'); 
+          Y.one('#quizletimport-timer').setStyle('display', 'none'); 
+          console.log('quizletimport:completed');
         }
         //Y.one('#quizletimport-timer').setStyle('display', 'block');
     },
@@ -77,6 +83,10 @@ M.mod_quizletimport.timer = {
     	var id = id; // Transaction ID.
         var data = o.responseText; // Response data.
         console.log(data);
+        var Y = M.mod_quizletimport.timer.Y;
+        Y.one('#quizletimport-timer').setStyle('display', 'none');
+        Y.one('#quizletimport-completed').setStyle('display', 'block');
+          
         //var args = args[1]; // 'ipsum'.
     },
 
@@ -96,16 +106,13 @@ M.mod_quizletimport.timer = {
         }
 
         // If time has nearly expired, change the colour.
-        /*
         if (secondsleft < 100) {
             Y.one('#quizletimport-timer').removeClass('timeleft' + (secondsleft + 2))
                     .removeClass('timeleft' + (secondsleft + 1))
                     .addClass('timeleft' + secondsleft);
         }
-        */
 
         // Update the time display.
-        /*
         var hours = Math.floor(secondsleft/3600);
         secondsleft -= hours*3600;
         var minutes = Math.floor(secondsleft/60);
@@ -114,7 +121,7 @@ M.mod_quizletimport.timer = {
         Y.one('#quizletimport-time-left').setContent(hours + ':' +
                 M.mod_quizletimport.timer.two_digit(minutes) + ':' +
                 M.mod_quizletimport.timer.two_digit(seconds));
-        */
+        
 
         // Arrange for this method to be called again soon.
         M.mod_quizletimport.timer.timeoutid = setTimeout(M.mod_quizletimport.timer.update, 100);

@@ -62,6 +62,18 @@ class quizletimport_quizlet {
         $this->page->requires->js_init_call('M.mod_quizletimport.timer.init', $options, false);
     }
     
+       /**
+     * Return the HTML of the quiz timer.
+     * @return string HTML content.
+     */
+    public function countdown_timer() {
+
+        return html_writer::tag('div', get_string('timeleft', 'quiz') . ' ' .
+                html_writer::tag('span', '', array('id' => 'quiz-time-left')),
+                array('id' => 'quiz-timer', 'role' => 'timer',
+                    'aria-atomic' => 'true', 'aria-relevant' => 'text'));
+    }
+    
 
 	
 	   /**

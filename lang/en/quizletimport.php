@@ -65,5 +65,8 @@ $string['acttype_moodlequiz'] = 'Moodle Quiz';
 $string['mintime'] = 'Minimum Time Required';
 $string['width'] = 'width';
 $string['height'] = 'height';
+$string['completed'] = 'Activity Complete';
+
+
 
 

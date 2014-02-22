@@ -26,11 +26,14 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/// (Replace quizletimport with the name of your module and remove this line)
 
+//require a few lines
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
 require_once(dirname(__FILE__).'/locallib.php');
+
+//require completion lib, so we can check our completion status
+require_once($CFG->dirroot.'/lib/completionlib.php');
 
 $id = optional_param('id', 0, PARAM_INT); // course_module ID, or
 $n  = optional_param('n', 0, PARAM_INT);  // quizletimport instance ID - it should be named as the first character of the module
@@ -50,6 +53,8 @@ if ($id) {
 
 require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
+
+global $USER;
 
 //this is important cos we use this to figure out how long student was on page
 add_to_log($course->id, 'quizletimport', 'view', "view.php?id={$cm->id}", $quizletimport->name, $cm->id);
@@ -76,12 +81,18 @@ if ($quizletimport->intro) { // Conditions to show the intro can change to look 
     echo $OUTPUT->box(format_module_intro('quizletimport', $quizletimport, $cm->id), 'generalbox mod_introbox', 'quizletimportintro');
 }
 
-//init or timer if we have a min time
-//if ($quizletimport->mintime){
-   $options = array($quizletimport->mintime,$cm->id);
-   $PAGE->requires->js_init_call('M.mod_quizletimport.timer.init', $options, false);
-	//$quizletimport->initialise_timer($quizletimport->mintime,$cm->id);
-//}
+
+// Get current completion state
+$completion = new completion_info($course);
+$data = $completion->get_data($cm, false, $USER->id);
+
+// Is the activity already complete
+$completed= $data->viewed == COMPLETION_VIEWED;
+
+//set the js to the page
+$options = array($quizletimport->mintime,$cm->id, $completed);
+$PAGE->requires->js_init_call('M.mod_quizletimport.timer.init', $options, false);
+
 
 
 // Replace the following lines with your own code
@@ -125,6 +136,17 @@ $qiz  = new quizlet($args);
 //display our quizlet activity
 $embedcode = $qiz->fetch_embed_code($quizletimport->quizletset,$quizletimport->activitytype);
 echo $embedcode;
+
+//output completed tag
+echo html_writer::tag('div',  get_string('completed', 'quizletimport'),array('id' => 'quizletimport-completed'));
+
+//output time left counter
+$timer = html_writer::tag('div', get_string('timeleft', 'quiz') . ' ' .
+            html_writer::tag('span', '', array('id' => 'quizletimport-time-left')),
+            array('id' => 'quizletimport-timer', 'role' => 'timer',
+                'aria-atomic' => 'true', 'aria-relevant' => 'text'));
+
+echo $timer;
 
 // Finish the page
 echo $OUTPUT->footer();
