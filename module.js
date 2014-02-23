@@ -47,12 +47,12 @@ M.mod_quizletimport.timer = {
         M.mod_quizletimport.timer.cmid = cmid;
         if(start>0 && !$completed){
                 Y.one('#quizletimport-timer').setStyle('display', 'block');
-        	Y.one('#quizletimport-completed').setStyle('display', 'none');
+        	//Y.one('#quizletimport-completed').setStyle('display', 'none');
                 M.mod_quizletimport.timer.update();
-        	console.log('quizletimport:counting' + start + ":" + M.mod_quizletimport.timer.cmid + ":" + $completeds);
+        	console.log('quizletimport:counting' + start + ":" + M.mod_quizletimport.timer.cmid + ":" + $completed);
         }else if($completed){
           Y.one('#quizletimport-completed').setStyle('display', 'block'); 
-          Y.one('#quizletimport-timer').setStyle('display', 'none'); 
+          //Y.one('#quizletimport-timer').setStyle('display', 'none'); 
           console.log('quizletimport:completed');
         }
         //Y.one('#quizletimport-timer').setStyle('display', 'block');

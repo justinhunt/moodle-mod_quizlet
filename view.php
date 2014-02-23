@@ -72,7 +72,7 @@ $PAGE->set_context($context);
 //$PAGE->set_focuscontrol('some-html-id');
 //$PAGE->add_body_class('quizletimport-'.$somevar);
 
-
+$qih = new quizletimport_helper($quizletimport,$course,$cm);
 
 // Output starts here
 echo $OUTPUT->header();
@@ -81,7 +81,7 @@ if ($quizletimport->intro) { // Conditions to show the intro can change to look 
     echo $OUTPUT->box(format_module_intro('quizletimport', $quizletimport, $cm->id), 'generalbox mod_introbox', 'quizletimportintro');
 }
 
-
+/*
 // Get current completion state
 $completion = new completion_info($course);
 $data = $completion->get_data($cm, false, $USER->id);
@@ -92,8 +92,9 @@ $completed= $data->viewed == COMPLETION_VIEWED;
 //set the js to the page
 $options = array($quizletimport->mintime,$cm->id, $completed);
 $PAGE->requires->js_init_call('M.mod_quizletimport.timer.init', $options, false);
+*/
 
-
+$qih->initialise_timer($PAGE);
 
 // Replace the following lines with your own code
 echo $OUTPUT->heading('Yay! It works!');
@@ -128,24 +129,31 @@ if($qmessage){
 }
 */
 //print_r($quizletimport);
+/*
  $args = array(
 			'api_scope' => 'read'
         );
 $qiz  = new quizlet($args);
+*/
+$qiz=$qih->quizlet;
 
 //display our quizlet activity
 $embedcode = $qiz->fetch_embed_code($quizletimport->quizletset,$quizletimport->activitytype);
 echo $embedcode;
 
 //output completed tag
-echo html_writer::tag('div',  get_string('completed', 'quizletimport'),array('id' => 'quizletimport-completed'));
+$completed = $qih->fetch_completed_tag();
+echo $completed;
+//echo html_writer::tag('div',  get_string('completed', 'quizletimport'),array('id' => 'quizletimport-completed'));
 
+$timer=$qih->fetch_countdown_timer();
+/*
 //output time left counter
 $timer = html_writer::tag('div', get_string('timeleft', 'quiz') . ' ' .
             html_writer::tag('span', '', array('id' => 'quizletimport-time-left')),
             array('id' => 'quizletimport-timer', 'role' => 'timer',
                 'aria-atomic' => 'true', 'aria-relevant' => 'text'));
-
+*/
 echo $timer;
 
 // Finish the page

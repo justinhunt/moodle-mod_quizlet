@@ -29,20 +29,26 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
+//require completion lib, so we can check our completion status
+require_once($CFG->dirroot.'/lib/completionlib.php');
+//require oauthlib for quizlet
 require_once($CFG->libdir.'/oauthlib.php');
 
 /**
  * File browsing support class
  */
-class quizletimport_quizlet {
+class quizletimport_helper {
 
+    //$quizlet = null;
+    //$course = null;
+    //$cmid = null;
 	
     /**
      * Constructor of quizlet plugin
      *
      * @param array $options
      */
-    public function __construct($quizletimport) {
+    public function __construct($quizletimport,$course,$cm) {
         global $CFG;
 
         $args = array(
@@ -50,28 +56,49 @@ class quizletimport_quizlet {
         );
 
         $this->quizlet = new quizlet($args);
-        
+        $this->course = $course;
+        $this->cm = $cm;
+        $this->qi = $quizletimport;
     }
     
       /**
      * Output the JavaScript required to initialise the countdown timer.
      * @param int $timerstartvalue time remaining, in seconds.
      */
-    public function initialise_timer($timerstartvalue,$cmid) {
-        $options = array($timerstartvalue,$cmid);
-        $this->page->requires->js_init_call('M.mod_quizletimport.timer.init', $options, false);
+    public function initialise_timer($page) {
+        $options = array($this->qi->mintime,$this->cm->id,$this->is_complete());
+        $page->requires->js_init_call('M.mod_quizletimport.timer.init', $options, false);
+    }
+    
+    public function is_complete(){
+        global $USER;
+         // Get current completion state
+        $completion = new completion_info($this->course);
+        $data = $completion->get_data($this->cm, false, $USER->id);
+
+        // Is the activity already complete
+        $completed= $data->viewed == COMPLETION_VIEWED;    
+        return $completed;
     }
     
        /**
      * Return the HTML of the quiz timer.
      * @return string HTML content.
      */
-    public function countdown_timer() {
-
+    public function fetch_completed_tag() {
+        return html_writer::tag('div',  get_string('completed', 'quizletimport'),array('id' => 'quizletimport-completed'));
+        
+    }
+    
+       /**
+     * Return the HTML of the quiz timer.
+     * @return string HTML content.
+     */
+    public function fetch_countdown_timer() {
         return html_writer::tag('div', get_string('timeleft', 'quiz') . ' ' .
-                html_writer::tag('span', '', array('id' => 'quiz-time-left')),
-                array('id' => 'quiz-timer', 'role' => 'timer',
-                    'aria-atomic' => 'true', 'aria-relevant' => 'text'));
+            html_writer::tag('span', '', array('id' => 'quizletimport-time-left')),
+            array('id' => 'quizletimport-timer', 'role' => 'timer',
+                'aria-atomic' => 'true', 'aria-relevant' => 'text'));
     }
     
 
