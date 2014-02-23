@@ -1,0 +1,24 @@
+
+
+/* Countdown timer. */
+#quizletimport-completed {display: none; margin-top: 1em;} 
+#quizletimport-timer {display: none; margin-top: 1em;} 
+#quizletimport-time-left {font-weight: bold;}
+#quizletimport-timer.timeleft15 {background: #ffffff;}
+#quizletimport-timer.timeleft14 {background: #ffeeee;}
+#quizletimport-timer.timeleft13 {background: #ffdddd;}
+#quizletimport-timer.timeleft12 {background: #ffcccc;}
+#quizletimport-timer.timeleft11 {background: #ffbbbb;}
+#quizletimport-timer.timeleft10 {background: #ffaaaa;}
+#quizletimport-timer.timeleft9 {background: #ff9999;}
+#quizletimport-timer.timeleft8 {background: #ff8888;}
+#quizletimport-timer.timeleft7 {background: #ff7777;}
+#quizletimport-timer.timeleft6 {background: #ff6666;}
+#quizletimport-timer.timeleft5 {background: #ff5555;}
+#quizletimport-timer.timeleft4 {background: #ff4444;}
+#quizletimport-timer.timeleft3 {background: #ff3333;}
+#quizletimport-timer.timeleft2 {background: #ff2222;}
+#quizletimport-timer.timeleft1 {background: #ff1111;}
+#quizletimport-timer.timeleft0 {background: #ff0000;}
+#quizletimport-timer {text-align: center; margin-top: 1em;}
+#quizletimport-completed {text-align: center; margin-top: 1em; background: #F4C63f;}
