@@ -66,7 +66,7 @@ class quizletimport_helper {
      * @param int $timerstartvalue time remaining, in seconds.
      */
     public function initialise_timer($page) {
-        $options = array($this->qi->mintime,$this->cm->id,$this->is_complete());
+        $options = array($this->qi->mintime,$this->qi->showcountdown>0,$this->cm->id,$this->qi->showcompletion>0,$this->is_complete());
         $page->requires->js_init_call('M.mod_quizletimport.timer.init', $options, false);
     }
     
@@ -95,7 +95,7 @@ class quizletimport_helper {
      * @return string HTML content.
      */
     public function fetch_countdown_timer() {
-        return html_writer::tag('div', get_string('timeleft', 'quiz') . ' ' .
+        return html_writer::tag('div', get_string('timeleft', 'quizletimport') . ' ' .
             html_writer::tag('span', '', array('id' => 'quizletimport-time-left')),
             array('id' => 'quizletimport-timer', 'role' => 'timer',
                 'aria-atomic' => 'true', 'aria-relevant' => 'text'));

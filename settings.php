@@ -35,15 +35,10 @@ if ($ADMIN->fulltree) {
     //--- general settings -----------------------------------------------------------------------------------
     $settings->add(new admin_setting_configcheckbox('quizletimport/requiremodintro',
         get_string('requiremodintro', 'admin'), get_string('configrequiremodintro', 'admin'), 1));
-    $settings->add(new admin_setting_configmultiselect('quizletimport/displayoptions',
-        get_string('displayoptions', 'quizletimport'), get_string('configdisplayoptions', 'quizletimport'),
-        $defaultdisplayoptions, $displayoptions));
+
 
     //--- modedit defaults -----------------------------------------------------------------------------------
- 
-    $settings->add(new admin_setting_configcheckbox('quizletimport/printheading',
-        get_string('printheading', 'quizletimport'), get_string('printheadingexplain', 'quizletimport'), 1));
-		
+
 	  $settings->add(new admin_setting_configtext('quizletimport/apikey',
         get_string('apikey', 'quizletimport'), get_string('apikeyexplain', 'quizletimport'), 'YOUR API KEY', PARAM_TEXT));
 		

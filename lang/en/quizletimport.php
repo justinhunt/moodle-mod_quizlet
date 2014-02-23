@@ -66,6 +66,9 @@ $string['mintime'] = 'Minimum Time Required';
 $string['width'] = 'width';
 $string['height'] = 'height';
 $string['completed'] = 'Activity Complete';
+$string['timeleft'] = 'Time till complete:';
+$string['showcountdown'] = 'Show Countdown to Completion';
+$string['showcompletion'] = 'Show Completion Label when Complete';
 
 
 

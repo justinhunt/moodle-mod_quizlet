@@ -127,10 +127,15 @@ class mod_quizletimport_mod_form extends moodleform_mod {
 		//Add a place to set a mimumum time after which the activity is recorded complete
 	   $mform->addElement('duration', 'mintime', get_string('mintime', 'quizletimport'));    
        $mform->setDefault('mintime',0);
+       
+       //show countdown timer
+	   $mform->addElement('selectyesno', 'showcountdown', get_string('showcountdown', 'quizletimport'));    
+       $mform->setDefault('showcountdown',false);
+       
+      //show completion tag
+	   $mform->addElement('selectyesno', 'showcompletion', get_string('showcompletion', 'quizletimport'));    
+       $mform->setDefault('showcompletion',true);
       
-
-        $mform->addElement('header', 'quizletimportfieldset', get_string('quizletimportfieldset', 'quizletimport'));
-        $mform->addElement('static', 'label2', 'quizletimportsetting2', 'Your quizletimport fields go here. Replace me!');
 
         //-------------------------------------------------------------------------------
         // add standard elements, common to all modules

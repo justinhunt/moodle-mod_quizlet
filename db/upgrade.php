@@ -43,7 +43,7 @@ function xmldb_quizletimport_upgrade($oldversion) {
 
     $dbman = $DB->get_manager(); // loads ddl manager and xmldb classes
 
-    // First example, some fields were added to install.xml on 2007/04/01
+    // initial change
     if ($oldversion < 2014021100) {
 
         // Define field activitytype to be added to quizletimport
@@ -75,6 +75,31 @@ function xmldb_quizletimport_upgrade($oldversion) {
         // Once we reach this point, we can store the new version and consider the module
         // upgraded to the version 2007040100 so the next time this block is skipped
         upgrade_mod_savepoint(true, 2014021100, 'quizletimport');
+    }
+    
+      // added showcompletion and showcountdown fields
+    if ($oldversion < 2014022300) {
+
+        // Define field activitytype to be added to quizletimport
+        $table = new xmldb_table('quizletimport');
+        $field = new xmldb_field('showcountdown', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '0', 'mintime');
+
+        // Add field showcountdown
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // add field show completion
+         $field = new xmldb_field('showcompletion', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, '1', 'showcountdown');
+
+        // Add field quizletset
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        
+
+        // Once we reach this point, we can store the new version and consider the module upgraded
+        upgrade_mod_savepoint(true, 2014022300, 'quizletimport');
     }
 
     return true;

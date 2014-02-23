@@ -41,19 +41,26 @@ M.mod_quizletimport.timer = {
      * @param start, the timer starting time, in seconds.
      * @param preview, is this a quiz preview?
      */
-    init: function(Y, start,cmid,$completed) {
+    init: function(Y, start,showcountdown, cmid, showcompletion, completed) {
+    	 console.log('quizletimport:start:' + start +':countdown:' + showcountdown + ':showcompletion:' + showcompletion);
         M.mod_quizletimport.timer.Y = Y;
         M.mod_quizletimport.timer.endtime = M.pageloadstarttime.getTime() + start*1000;
         M.mod_quizletimport.timer.cmid = cmid;
-        if(start>0 && !$completed){
+        M.mod_quizletimport.timer.showcompletion = showcompletion;
+        M.mod_quizletimport.timer.showcountdown = showcountdown;
+        if(start>0 && !completed){
+        	if(showcountdown){
                 Y.one('#quizletimport-timer').setStyle('display', 'block');
-        	//Y.one('#quizletimport-completed').setStyle('display', 'none');
-                M.mod_quizletimport.timer.update();
-        	console.log('quizletimport:counting' + start + ":" + M.mod_quizletimport.timer.cmid + ":" + $completed);
-        }else if($completed){
-          Y.one('#quizletimport-completed').setStyle('display', 'block'); 
+            }
+            
+            M.mod_quizletimport.timer.update();
+        	//console.log('quizletimport:counting' + start + ":" + M.mod_quizletimport.timer.cmid + ":" + $completed);
+        }else if(completed){
+          if(showcompletion){
+          	Y.one('#quizletimport-completed').setStyle('display', 'block'); 
+          }
           //Y.one('#quizletimport-timer').setStyle('display', 'none'); 
-          console.log('quizletimport:completed');
+          //console.log('quizletimport:completed');
         }
         //Y.one('#quizletimport-timer').setStyle('display', 'block');
     },
@@ -85,9 +92,10 @@ M.mod_quizletimport.timer = {
         console.log(data);
         var Y = M.mod_quizletimport.timer.Y;
         Y.one('#quizletimport-timer').setStyle('display', 'none');
-        Y.one('#quizletimport-completed').setStyle('display', 'block');
-          
-        //var args = args[1]; // 'ipsum'.
+        if(M.mod_quizletimport.timer.showcompletion){
+        	Y.one('#quizletimport-completed').setStyle('display', 'block');
+        }
+
     },
 
     // Function to update the clock with the current time left, and submit the quiz if necessary.
@@ -100,7 +108,7 @@ M.mod_quizletimport.timer = {
             M.mod_quizletimport.timer.stop(null);
            	var uri  = 'ajaxcomplete.php?id=' +  M.mod_quizletimport.timer.cmid;
            	Y.on('io:complete', M.mod_quizletimport.timer.complete, Y,null);
-           	console.log('goingin');
+           	//console.log('goingin');
            	Y.io(uri);
             return;
         }
