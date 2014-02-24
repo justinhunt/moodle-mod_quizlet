@@ -22,7 +22,7 @@
  * visit: http://docs.moodle.org/en/Development:lib/formslib.php
  *
  * @package    mod_quizletimport
- * @copyright  2011 Your Name
+ * @copyright  2014 Justin Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -106,7 +106,9 @@ class mod_quizletimport_mod_form extends moodleform_mod {
 				}
 		}else{
 			 $mform->addElement('static', 'quizletauthorize', get_string('quizletloginlabel', 'quizletimport'), '<a href="' . $qiz->fetch_auth_url() . '">' . get_string('quizletlogin', 'quizletimport') . '</a>');
-		}
+                         $mform->addElement('text', 'quizletset', get_string('quizletsetinput', 'quizletimport'),array('size' => '64'));
+                                         
+                }
 
 		//if along the way we got an error back from quizlet, lets display it.
 		if($qmessage){

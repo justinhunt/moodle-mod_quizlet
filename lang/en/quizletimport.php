@@ -69,7 +69,8 @@ $string['completed'] = 'Activity Complete';
 $string['timeleft'] = 'Time till complete:';
 $string['showcountdown'] = 'Show Countdown to Completion';
 $string['showcompletion'] = 'Show Completion Label when Complete';
-
+$string['createquizletimport'] = 'Create Quizlet Activity';
+$string['quizletsetinput'] = 'Quizlet Set ID';
 
 
 

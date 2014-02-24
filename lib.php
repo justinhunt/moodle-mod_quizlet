@@ -50,6 +50,7 @@ function quizletimport_supports($feature) {
         case FEATURE_MOD_INTRO:         return true;
         case FEATURE_SHOW_DESCRIPTION:  return true;
     	case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
+        case FEATURE_BACKUP_MOODLE2:          return true;
         default:                        return null;
     }
 }
@@ -74,6 +75,52 @@ function quizletimport_add_instance(stdClass $quizletimport, mod_quizletimport_m
     # You may have to add extra stuff in here #
 
     return $DB->insert_record('quizletimport', $quizletimport);
+}
+
+/**
+ * Register the ability to handle drag and drop file uploads
+ * @return array containing details of the files / types the mod can handle
+ */
+function quizletimport_dndupload_register() {
+    /*
+    return array('files' => array(
+                     array('extension' => 'qlt', 'message' => get_string('createquizletimport', 'page'))
+                 ));
+     *
+     */
+    return array('types' => array(
+                 array('identifier' => 'text', 'message' => get_string('createquizletimport', 'quizletimport'))
+             ));
+}
+
+/**
+ * Handle a file that has been uploaded
+ * @param object $uploadinfo details of the file / content that has been uploaded
+ * @return int instance id of the newly created mod
+ */
+function quizletimport_dndupload_handle($uploadinfo) {
+    // Gather the required info.
+    $data = new stdClass();
+    $data->course = $uploadinfo->course->id;
+    $data->name = $uploadinfo->displayname;
+    $data->intro = '<p>'.$uploadinfo->displayname.'</p>';
+    $data->introformat = FORMAT_HTML;
+    //get params from passed in DND content
+    $stringcontent = clean_param($uploadinfo->content, PARAM_TEXT);
+    $temparray = explode(',', $stringcontent);
+    $theparams = array();
+    foreach ($temparray as $result) {
+        $p = explode('=', $result);
+        $theparams[$p[0]] = $p[1];
+    }
+    //configure activity
+    $data->activitytype=$theparams['activitytype'];
+    $data->quizletset=$theparams['quizletset'];
+    $data->mintime=$theparams['mintime'];
+    $data->showcompletion=$theparams['showcompletion'];
+    $data->showcountdown=$theparams['showcountdown'];
+    $data->coursemodule = $uploadinfo->coursemodule;
+    return quizletimport_add_instance($data, null);
 }
 
 /**
