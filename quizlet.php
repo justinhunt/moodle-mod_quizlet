@@ -42,7 +42,7 @@ require_once($CFG->libdir.'/oauthlib.php');
  * iii) quizlet uses access token and username in data requests, facebook etc use access_token and secrets
  * 
  *
- * @package    quizlet_inport
+ * @package    quizlet_import
  * @copyright  2014 Justin Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -178,11 +178,11 @@ class quizlet {
 			$ret['error'] = "an unknown error occurred. Nothing recieved from quizlet.";
 			return $ret;
 		}
-		if(!$data['error']){
-			$ret['error'] = 'Error code: ' . $data['error'] ;
+		if($data->error){
+			$ret['error'] = 'Error code: ' . $data->error ;
 		}
-		if(!$data['error_description']){
-			$ret['error'] = $ret['error'] . ': Description: ' . $data['error_description'] ;
+		if($data->error_description){
+			$ret['error'] = $ret['error'] . ': Description: ' . $data->error_description;
 		}
 		return $ret;
 	}
@@ -204,6 +204,7 @@ class quizlet {
     public function request($endpoint, $params){
 		//build our request URL
 		$endpoint = str_replace('@username@', $this->get_stored_data(self::ACCESS_USERNAME),$endpoint);
+		$endpoint = str_replace('@accesstoken@', $this->get_stored_data(self::ACCESS_TOKEN),$endpoint);
 		$useparams='?whitespace=1';
 		if($params){
 			foreach($params  as $key => $value){

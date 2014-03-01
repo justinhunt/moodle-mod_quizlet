@@ -40,8 +40,11 @@ class mod_quizletimport_mod_form extends moodleform_mod {
      * Defines forms elements
      */
     public function definition() {
+    	global $CFG,$COURSE;
 
         $mform = $this->_form;
+		
+		$config = get_config('quizletimport');
 
         //-------------------------------------------------------------------------------
         // Adding the "general" fieldset, where all the common settings are showed
@@ -99,17 +102,23 @@ class mod_quizletimport_mod_form extends moodleform_mod {
 						$options[$quizletset->id] = $quizletset->title;
 					}
 					//$attributes = array('size'=>5);
-					$select = $mform->addElement('select', 'quizletset', get_string('usersets', 'quizletimport'), $options);
-					$select->setMultiple(false);
+					$qset = $mform->addElement('select', 'quizletset', get_string('usersets', 'quizletimport'), $options);
+					$qset->setMultiple(false);
+					 $mform->setType('quizletset', PARAM_TEXT);
+					
+					//also add a jumping off point for our quiz maker	
+					$cmid = optional_param('update', 0, PARAM_INT); // course_module ID		              
+         			$mform->addElement('static', 'createmquiz', get_string('createmquiz', 'quizletimport'), '<a href="' . $CFG->wwwroot . '/mod/quizletimport/export_to_quiz.php?id=' . $cmid . '">' . get_string('createmquiz', 'quizletimport') . '</a>');
+           
 				}else{
 					$qmessage =  $mysets['error'];
 				}
 		}else{
 			 $mform->addElement('static', 'quizletauthorize', get_string('quizletloginlabel', 'quizletimport'), '<a href="' . $qiz->fetch_auth_url() . '">' . get_string('quizletlogin', 'quizletimport') . '</a>');
                          $mform->addElement('text', 'quizletset', get_string('quizletsetinput', 'quizletimport'),array('size' => '64'));
-                                         
+                         $mform->setType('quizletset', PARAM_TEXT);                
                 }
-
+  
 		//if along the way we got an error back from quizlet, lets display it.
 		if($qmessage){
 			$mform->addElement('static', 'quizleterror', get_string('quizleterror', 'quizletimport'), $qmessage);
@@ -129,14 +138,15 @@ class mod_quizletimport_mod_form extends moodleform_mod {
 		//Add a place to set a mimumum time after which the activity is recorded complete
 	   $mform->addElement('duration', 'mintime', get_string('mintime', 'quizletimport'));    
        $mform->setDefault('mintime',0);
+	   $mform->addElement('static', 'mintimedetails', '',get_string('mintimedetails', 'quizletimport'));
        
        //show countdown timer
 	   $mform->addElement('selectyesno', 'showcountdown', get_string('showcountdown', 'quizletimport'));    
-       $mform->setDefault('showcountdown',false);
+       $mform->setDefault('showcountdown',$config->def_showcountdown);
        
       //show completion tag
 	   $mform->addElement('selectyesno', 'showcompletion', get_string('showcompletion', 'quizletimport'));    
-       $mform->setDefault('showcompletion',true);
+       $mform->setDefault('showcompletion',$config->def_showcompletion);
       
 
         //-------------------------------------------------------------------------------

@@ -86,7 +86,33 @@ if ($ADMIN->fulltree) {
 			get_string('width', 'quizletimport'), '', '100%', PARAM_TEXT));
 	$settings->add(new admin_setting_configtext('quizletimport/testheight', 
 			get_string('height', 'quizletimport'), '', '410', PARAM_INT));
-	
+			
+	//default times	
+	$settings->add(new admin_setting_heading('quizletimport/defaultmintime', get_string('defmintime_heading', 'quizletimport'), ''));	
+	$settings->add(new admin_setting_configtext('quizletimport/def_flashcards_mintime', 
+			get_string('acttype_flashcards', 'quizletimport') , '', 180, PARAM_INT));
+	$settings->add(new admin_setting_configtext('quizletimport/def_scatter_mintime', 
+			get_string('acttype_scatter', 'quizletimport') , '', 120, PARAM_INT));
+	$settings->add(new admin_setting_configtext('quizletimport/def_spacerace_mintime', 
+			get_string('acttype_spacerace', 'quizletimport') , '', 420, PARAM_INT));
+	$settings->add(new admin_setting_configtext('quizletimport/def_learn_mintime', 
+			get_string('acttype_learn', 'quizletimport') , '', 360, PARAM_INT));
+	$settings->add(new admin_setting_configtext('quizletimport/def_speller_mintime', 
+			get_string('acttype_speller', 'quizletimport') , '', 360, PARAM_INT));
+	$settings->add(new admin_setting_configtext('quizletimport/def_test_mintime', 
+			get_string('acttype_test', 'quizletimport') , '', 420, PARAM_INT));
+			
+	//default completion
+	$settings->add(new admin_setting_heading('quizletimport/defaultcompletion', get_string('defcompletion_heading', 'quizletimport'), ''));
+	//The size of the youtube player on the various screens		
+	$options = array(0 => new lang_string('no'),
+						   1 => new lang_string('yes'));
+					
+	$settings->add(new admin_setting_configselect('quizletimport/def_showcompletion', 
+						new lang_string('showcompletion', 'quizletimport'),'', 1, $options));
+						
+	$settings->add(new admin_setting_configselect('quizletimport/def_showcountdown', 
+						new lang_string('showcountdown', 'quizletimport'),'', 1, $options));
 	
 	
 

@@ -99,6 +99,10 @@ function quizletimport_dndupload_register() {
  * @return int instance id of the newly created mod
  */
 function quizletimport_dndupload_handle($uploadinfo) {
+global $CFG;
+//require oauthlib for quizlet
+require_once($CFG->dirroot.'/mod/quizletimport/quizlet.php');
+
     // Gather the required info.
     $data = new stdClass();
     $data->course = $uploadinfo->course->id;
@@ -113,8 +117,17 @@ function quizletimport_dndupload_handle($uploadinfo) {
         $p = explode('=', $result);
         $theparams[$p[0]] = $p[1];
     }
-    //configure activity
-    $data->activitytype=$theparams['activitytype'];
+    //determine which activity it is we are creating
+	$atype=0;
+	switch ($theparams['activitytype']){
+		case 'flashcards' : $atype = quizlet::TYPE_FLASHCARDS; break;
+		case 'scatter' : $atype = quizlet::TYPE_SCATTER; break;
+		case 'spacerace' : $atype = quizlet::TYPE_SPACERACE; break;
+		case 'test' : $atype = quizlet::TYPE_TEST; break;
+		case 'speller' : $atype = quizlet::TYPE_SPELLER; break;
+		case 'learn' : $atype = quizlet::TYPE_LEARN; break;
+	}
+    $data->activitytype=$atype;
     $data->quizletset=$theparams['quizletset'];
     $data->mintime=$theparams['mintime'];
     $data->showcompletion=$theparams['showcompletion'];

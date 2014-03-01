@@ -63,6 +63,7 @@ $string['acttype_test'] = 'Test';
 $string['acttype_moodlequiz'] = 'Moodle Quiz';
 
 $string['mintime'] = 'Minimum Time Required';
+$string['mintimedetails'] = 'If set to 0, the minimum time will be taken from the default settings on the configuration page for the Quizlet Import module in site administration.';
 $string['width'] = 'width';
 $string['height'] = 'height';
 $string['completed'] = 'Activity Complete';
@@ -71,6 +72,18 @@ $string['showcountdown'] = 'Show Countdown to Completion';
 $string['showcompletion'] = 'Show Completion Label when Complete';
 $string['createquizletimport'] = 'Create Quizlet Activity';
 $string['quizletsetinput'] = 'Quizlet Set ID';
+$string['exportentriestoxml'] = 'Export quizlet set to Quiz (XML)';
+$string['exportfile'] = 'Export quizlet set to question import file';
+$string['exportdragdrop'] = 'Export quizlet set to drag and drop file';
+$string['createmquiz'] = 'Create Moodle Quiz';
+$string['shortanswer'] = 'Short answer';
+$string['shortanswer_0'] = 'Short answer (Case insensitive)';
+$string['shortanswer_1'] = 'Short answer (Case sensitive)';
+$string['multichoice'] = 'Multiple Choice';
+$string['defmintime_heading'] = 'Default Minimum Time Per activity (seconds)';
+$string['defcompletion_heading'] = 'Default Completion Settings';
+
+
 
 
 

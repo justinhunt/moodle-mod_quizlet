@@ -66,6 +66,30 @@ class quizletimport_helper {
      * @param int $timerstartvalue time remaining, in seconds.
      */
     public function initialise_timer($page) {
+		if($this->qi->mintime==0){
+			$config = get_config('quizletimport');
+			switch($this->qi->activitytype){
+				case quizlet::TYPE_SCATTER:
+					$this->qi->mintime = $config->def_scatter_mintime;
+					break;
+				case quizlet::TYPE_SPACERACE:
+					$this->qi->mintime = $config->def_spacerace_mintime;
+					break;
+				case quizlet::TYPE_TEST:
+					$this->qi->mintime = $config->def_test_mintime;
+					break;
+				case quizlet::TYPE_SPELLER:
+					$this->qi->mintime = $config->def_speller_mintime;
+					break;
+				case quizlet::TYPE_LEARN:
+					$this->qi->mintime = $config->def_learn_mintime;
+					break;
+				case quizlet::TYPE_CARDS:	
+				default:
+					$this->qi->mintime = $config->def_flashcards_mintime;
+					
+			}
+		}
         $options = array($this->qi->mintime,$this->qi->showcountdown>0,$this->cm->id,$this->qi->showcompletion>0,$this->is_complete());
         $page->requires->js_init_call('M.mod_quizletimport.timer.init', $options, false);
     }
