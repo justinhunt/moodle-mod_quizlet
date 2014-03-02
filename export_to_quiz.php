@@ -7,7 +7,8 @@ require_once($CFG->dirroot.'/mod/quizletimport/quizlet.php');
 //require_once("lib.php");
 
 $id = required_param('id', PARAM_INT);      // Course Module ID
- 
+$param_searchtext = optional_param('searchtext','', PARAM_TEXT);
+$param_searchtype = optional_param('searchtype','', PARAM_TEXT);
 $url = new moodle_url('/mod/quizletimport/export_to_quiz.php', array('id'=>$id));
 
 
@@ -35,29 +36,73 @@ require_login($course->id, false, $cm);
 	$qiz  = new quizlet($args);
 	
 	
+	//here add searchable fields
+	$searchform = '<form action="export_to_quiz.php" method="post">';
+	$searchform  .= '<input type="text" name="searchtext"  /><br />';
+	$searchform  .='<input type="hidden" name="id" value="' . $id . '"/>'; 
+	$searchform  .='<input type="submit" name="searchtype" value="' . get_string("searchmysets", "quizletimport") . '" />';
+	$searchform  .='<input type="submit" name="searchtype" value="' . get_string("searchtitles", "quizletimport") . '" />';
+	$searchform  .='<input type="submit" name="searchtype" value="' . get_string("searchusers", "quizletimport") . '" />';
+	//never works? not even from their website api tester
+	//$searchform  .='<input type="submit" name="searchtype" value="' . get_string("searchterms", "quizletimport") . '" />';
+	$searchform  .='</form>';
+	
 	//if authenticated fill our select box with users sets
 	//otherwise show a login/authorize link
 	$select = "";
 	if($qiz->is_authenticated()){
-		$endpoint = '/users/@username@/sets';
-			$params = null;
-			/*
-			$params=array();
-			$params['term']='silla';
-			$params['q']='spanish';
-			$endpoint = '/search/sets';
-			*/
-
+		//default is to list our sets
+		$params = null;
+		if($param_searchtext =='' || $param_searchtype== get_string("searchmysets", "quizletimport")){
+			$endpoint = '/users/@username@/sets';
 			$mysets = $qiz->request($endpoint,$params);
 			if($mysets['success']){
+				$mysetsdata = $mysets['data'];
+			}
+		}else{
+			switch ($param_searchtype){	
+				case get_string("searchusers", "quizletimport"):
+					$params=array();
+					$params['creator']=$param_searchtext;
+					$endpoint = '/search/sets';
+					break;
+				case get_string("searchterms", "quizletimport"):
+					$params=array();
+					$params['term']=$param_searchtext;
+					$endpoint = '/search/sets';
+					break;	
+				case get_string("searchtitles", "quizletimport"):
+				default:
+					$params=array();
+					$params['q']=$param_searchtext;
+					$endpoint = '/search/sets';
+					break;	
+			}
+			
+			$mysets = $qiz->request($endpoint,$params);
+			if($mysets['success']){
+				$mysetsdata = $mysets['data']->sets;
+			}
+		}
+
+			if($mysets['success']){
+				$select_qexport = $qiz->fetch_set_selectlist($mysetsdata,'quizletset_qexport',true);
+				$select_ddrop = $qiz->fetch_set_selectlist($mysetsdata,'quizletset_ddrop',true);
+				/*
 				$select = "<select name='quizletset[]' multiple size='10'>";
 				$options = array();
-				foreach ($mysets['data'] as $quizletset){
+				foreach ($mysetsdata as $quizletset){
 					//NB ugly delimeter that passes all the way through. urrrghh
 					//but it is just to create a viewable name, so no stress if the name gets messed up
-					$select .= "<option value='" . $quizletset->id . "-"  . preg_replace("/[^A-Za-z0-9]/", "_", $quizletset->title ).  "'>" . $quizletset->title . "</option>";
+					if(empty($quizletset) || empty($quizletset->id)){continue;}
+					$qdescription = $quizletset->title;
+					$qdescription  .= ' (' . $quizletset->term_count . ')';
+					$qdescription  .= ' Author:' . $quizletset->created_by;
+					$qdescription  .= ' images:' . ($quizletset->has_images ? 'yes' : 'no') ;
+					$select .= "<option value='" . $quizletset->id . "-"  . preg_replace("/[^A-Za-z0-9]/", "_", $quizletset->title ).  "'>" . $qdescription . "</option>";
 				}
 				$select .= "</select>";
+				*/
 			}
 	}
 	
@@ -92,6 +137,9 @@ $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 echo $OUTPUT->heading($strexportentries);
 echo $OUTPUT->box_start('generalbox');
+echo $searchform;
+echo $OUTPUT->box_end();
+echo $OUTPUT->box_start('generalbox');
 ?>
     <form action="exportfile_to_quiz.php" method="post">
     <table border="0" cellpadding="6" cellspacing="6" width="100%">
@@ -114,7 +162,7 @@ echo $OUTPUT->box_start('generalbox');
 	  
     </div>
     <?php
-    echo get_string('usersets', 'quizletimport') . '<br />'  . $select;
+    echo get_string('availablesets', 'quizletimport') . '<br />'  . $select_qexport;
     ?>
 
     </form>
@@ -144,7 +192,7 @@ echo $OUTPUT->box_start('generalbox');
 		foreach ($activities as $aid=>$atitle){
 			echo("<input type='checkbox' name='activitytype[]' value='$aid'>$atitle</input><br />");
 		}
-		 echo get_string('usersets', 'quizletimport') . '<br />' . $select;
+		 echo get_string('availablesets', 'quizletimport') . '<br />' . $select_ddrop;
 	
 ?>
     </div>

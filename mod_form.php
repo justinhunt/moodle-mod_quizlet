@@ -88,12 +88,6 @@ class mod_quizletimport_mod_form extends moodleform_mod {
 		if($qiz->is_authenticated()){
 			$endpoint = '/users/@username@/sets';
 				$params = null;
-				/*
-				$params=array();
-				$params['term']='silla';
-				$params['q']='spanish';
-				$endpoint = '/search/sets';
-				*/
 	
 				$mysets = $qiz->request($endpoint,$params);
 				if($mysets['success']){

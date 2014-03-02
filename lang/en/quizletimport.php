@@ -50,6 +50,7 @@ $string['apikeyexplain'] = 'This can be generated over at quizlet.com';
 $string['apisecretexplain'] = 'This can be generated over at quizlet.com';
 
 $string['usersets'] = 'Users Quizlet Sets';
+$string['availablesets'] = 'Quizlet Sets';
 $string['quizletloginlabel'] = 'Quizlet Login';
 $string['quizletlogin'] = 'Login and confirm with quizlet to access your quizlet sets';
 $string['quizleterror'] = 'Quizlet Error';
@@ -82,6 +83,10 @@ $string['shortanswer_1'] = 'Short answer (Case sensitive)';
 $string['multichoice'] = 'Multiple Choice';
 $string['defmintime_heading'] = 'Default Minimum Time Per activity (seconds)';
 $string['defcompletion_heading'] = 'Default Completion Settings';
+$string['searchtitles'] = 'Search by Title and Subject';
+$string['searchterms'] = 'Search by Term';
+$string['searchusers'] = 'Search by User';
+$string['searchmysets'] = 'Fetch My Sets';
 
 
 
