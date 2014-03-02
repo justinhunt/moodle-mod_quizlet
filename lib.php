@@ -120,7 +120,7 @@ require_once($CFG->dirroot.'/mod/quizletimport/quizlet.php');
     //determine which activity it is we are creating
 	$atype=0;
 	switch ($theparams['activitytype']){
-		case 'flashcards' : $atype = quizlet::TYPE_FLASHCARDS; break;
+		case 'flashcards' : $atype = quizlet::TYPE_CARDS; break;
 		case 'scatter' : $atype = quizlet::TYPE_SCATTER; break;
 		case 'spacerace' : $atype = quizlet::TYPE_SPACERACE; break;
 		case 'test' : $atype = quizlet::TYPE_TEST; break;
