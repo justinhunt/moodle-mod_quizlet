@@ -58,7 +58,7 @@
     		$qsetname = $qset_params[1];
     		
 			 foreach($activitytypes as $activity){
-				$content.="name=$qsetname,activitytype=$activity,quizletset=$qsetid,mintime=0,showcountdown=1,showcompletion=1\n\n";
+				$content.="name=$qsetname,activitytype=$activity,quizletset=$qsetid,mintime=0,showcountdown=0,showcompletion=0\n\n";
 			}
 		}
 		send_file($content, $filename, 0, 0, true, true); 
@@ -173,7 +173,7 @@
     function print_category($quizletdata, $questiontype){
 		   $ret = "";
 		   $cleanname = clean_name($quizletdata->title);
-		   $categorypath = writetext( $cleanname . '/' . $questiontype );
+		   $categorypath = writetext( 'quizletquestions/' . $cleanname . '/' . $questiontype );
            $ret  .= "  <question type=\"category\">\n";
            $ret  .= "    <category>\n";
            $ret  .= "        $categorypath\n";
