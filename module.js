@@ -42,7 +42,7 @@ M.mod_quizletimport.timer = {
      * @param preview, is this a quiz preview?
      */
     init: function(Y, start,showcountdown, cmid, showcompletion, completed) {
-    	 console.log('quizletimport:start:' + start +':countdown:' + showcountdown + ':showcompletion:' + showcompletion);
+    	// console.log('quizletimport:start:' + start +':countdown:' + showcountdown + ':showcompletion:' + showcompletion);
         M.mod_quizletimport.timer.Y = Y;
         M.mod_quizletimport.timer.endtime = M.pageloadstarttime.getTime() + start*1000;
         M.mod_quizletimport.timer.cmid = cmid;
