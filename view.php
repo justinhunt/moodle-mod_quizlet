@@ -97,7 +97,6 @@ $PAGE->requires->js_init_call('M.mod_quizletimport.timer.init', $options, false)
 $qih->initialise_timer($PAGE);
 
 // Replace the following lines with your own code
-echo $OUTPUT->heading('Yay! It works!');
 /*
 // DO oauth2 and quizlet stuff
 $qiq  = new quizletimport_quizlet($quizletimport);
