@@ -86,19 +86,19 @@ class mod_quizletimport_mod_form extends moodleform_mod {
 		//if authenticated fill our select box with users sets
 		//otherwise show a login/authorize link
 		if($qiz->is_authenticated()){
-			$endpoint = '/users/@username@/sets';
+			$endpoint = 'users/@username@/sets';
 				$params = null;
-	
 				$mysets = $qiz->request($endpoint,$params);
+				
 				if($mysets['success']){
 					$options = array();
 					foreach ($mysets['data'] as $quizletset){
 						$options[$quizletset->id] = $quizletset->title;
 					}
-					//$attributes = array('size'=>5);
+
 					$qset = $mform->addElement('select', 'quizletset', get_string('usersets', 'quizletimport'), $options);
 					$qset->setMultiple(false);
-					 $mform->setType('quizletset', PARAM_TEXT);
+					$mform->setType('quizletset', PARAM_TEXT);
 					
 					//also add a jumping off point for our quiz maker	
 					$cmid = optional_param('update', 0, PARAM_INT); // course_module ID		              

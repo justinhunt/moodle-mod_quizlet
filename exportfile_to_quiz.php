@@ -80,7 +80,7 @@
 		}
 		
 
-		$endpoint = "/sets";
+		$endpoint = "sets";
 		$qset_ids_string =  implode(",", $qset_ids);
 		$params=array();
 		//sample two sets

@@ -62,7 +62,7 @@ class quizlet {
 	const TYPE_LEARN = 5;
 	const TYPE_MOODLE_QUIZ = 6;
    
-       /** @var string consumer key, issued by oauth provider*/
+    /** @var string consumer key, issued by oauth provider*/
     protected $consumer_key;
     /** @var string consumer secret, issued by oauth provider*/
     protected $consumer_secret;
@@ -154,10 +154,19 @@ class quizlet {
 		curl_setopt($curl, CURLOPT_USERPWD, "{$this->consumer_key}:{$this->consumer_secret}");
 		curl_setopt($curl, CURLOPT_POST, true);
 		curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
+		
+		/* use this for debugging. Make sure you have a writeable curllog.txt
+		curl_setopt($curl, CURLOPT_VERBOSE, true);
+		$verbose = fopen(dirname(__FILE__) . '/curllog.txt', 'rw+');
+		curl_setopt($curl, CURLOPT_STDERR, $verbose);
+		*/
+		
 		$returndata = json_decode(curl_exec($curl), true);
+		//error_log(print_r($returndata,true));
+		
 		$responseCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 		curl_close($curl);
-	 
+	
 		// Handle return data or error
 		if ($responseCode == 200) { 
 			$this->store_data(self::ACCESS_TOKEN, $returndata['access_token']);
@@ -166,8 +175,6 @@ class quizlet {
 		}else{
 			return $this->fetch_error_return($returndata );
 		}
-	 
-
     }
 	
 	private function fetch_error_return($data){
@@ -215,6 +222,10 @@ class quizlet {
 		$curl = curl_init(self::API_URL . $endpoint . $useparams);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, array('Authorization: Bearer '.$this->get_stored_data(self::ACCESS_TOKEN)));
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		error_log("API_URL:" . self::API_URL . $endpoint . $useparams);
+		error_log("HTTPHEADER:" . 'Authorization: Bearer '. $this->get_stored_data(self::ACCESS_TOKEN));
+		
+		
 		$data = json_decode(curl_exec($curl));
 		$responseCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 		curl_close($curl);

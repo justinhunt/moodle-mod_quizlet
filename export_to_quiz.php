@@ -54,7 +54,7 @@ require_login($course->id, false, $cm);
 		//default is to list our sets
 		$params = null;
 		if($param_searchtext =='' || $param_searchtype== get_string("searchmysets", "quizletimport")){
-			$endpoint = '/users/@username@/sets';
+			$endpoint = 'users/@username@/sets';
 			$mysets = $qiz->request($endpoint,$params);
 			if($mysets['success']){
 				$mysetsdata = $mysets['data'];
@@ -64,18 +64,18 @@ require_login($course->id, false, $cm);
 				case get_string("searchusers", "quizletimport"):
 					$params=array();
 					$params['creator']=$param_searchtext;
-					$endpoint = '/search/sets';
+					$endpoint = 'search/sets';
 					break;
 				case get_string("searchterms", "quizletimport"):
 					$params=array();
 					$params['term']=$param_searchtext;
-					$endpoint = '/search/sets';
+					$endpoint = 'search/sets';
 					break;	
 				case get_string("searchtitles", "quizletimport"):
 				default:
 					$params=array();
 					$params['q']=$param_searchtext;
-					$endpoint = '/search/sets';
+					$endpoint = 'search/sets';
 					break;	
 			}
 			
