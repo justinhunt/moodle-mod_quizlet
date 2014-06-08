@@ -87,8 +87,11 @@ $string['searchtitles'] = 'Search by Title and Subject';
 $string['searchterms'] = 'Search by Term';
 $string['searchusers'] = 'Search by User';
 $string['searchmysets'] = 'Fetch My Sets';
+$string['searchtext'] = 'Search Terms';
 
-
+$string['selectset'] = 'Select a Quizlet Set';
+$string['quizletsetid'] = 'Quizlet Set ID';
+$string['quizletsettitle'] = 'Quizlet Set Title';
 
 
 

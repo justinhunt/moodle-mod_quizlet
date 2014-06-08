@@ -33,6 +33,10 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 //require oauthlib for quizlet
 require_once($CFG->libdir.'/oauthlib.php');
 
+//require forms data for our search form
+require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir.'/datalib.php');
+
 /**
  * Authentication class to access Quizlet API
  * originally extended oauth_helper, but it was not so helpful
@@ -349,9 +353,17 @@ class quizlet {
 		return $iframe;
 	}
 	
-	public function fetch_set_selectlist($setdata_array,$dom_id,$multiselect){
+	public function fetch_set_selectlist($setdata_array,$dom_id,$multiselect=false){
 		$multiple = ($multiselect ? 'multiple' : '');
-		$select = "<select name='quizletset[]' id='" . $dom_id . "' " . $multiple . " size='10'>";
+		if(!$multiple){
+			$selectname = "selectedset"; 
+			$multiple = "";
+		}else{
+			$selectname = "selectedset[]"; 
+			$multiple = "multiple";
+		}
+		
+		$select = "<select name='" . $selectname ."' id='" . $dom_id . "' " . $multiple . " size='10'>";
 				foreach ($setdata_array as $quizletset){
 					//NB ugly delimeter that passes all the way through. urrrghh
 					//but it is just to create a viewable name, so no stress if the name gets messed up
@@ -365,23 +377,66 @@ class quizlet {
 				$select .= "</select>";
 				return $select;
 	}
+	
+	//do a basic search from the quizlet_search_form
+	public function do_search($param_searchtext='',$param_searchtype=''){
+		if($param_searchtext =='' || $param_searchtype== get_string("searchmysets", "quizletimport")){
+			$endpoint = 'users/@username@/sets';
+			$params = null;
+			$mysets = $this->request($endpoint,$params);
+			if($mysets['success']){
+				$mysetsdata = $mysets['data'];
+			}
+		}else{
+			switch ($param_searchtype){	
+				case get_string("searchusers", "quizletimport"):
+					$params=array();
+					$params['creator']=$param_searchtext;
+					$endpoint = 'search/sets';
+					break;
+				case get_string("searchterms", "quizletimport"):
+					$params=array();
+					$params['term']=$param_searchtext;
+					$endpoint = 'search/sets';
+					break;	
+				case get_string("searchtitles", "quizletimport"):
+				default:
+					$params=array();
+					$params['q']=$param_searchtext;
+					$endpoint = 'search/sets';
+					break;	
+			}
+			
+			$mysets = $this->request($endpoint,$params);
+			if($mysets['success']){
+				$mysetsdata = $mysets['data']->sets;
+			}
+		}
+		
+		return $mysets;
+	
+	}
 
-    /**
-     * Get file listing from dropbox
-     *
-     * @param string $path
-     * @param string $token
-     * @param string $secret
-     * @return array
-     */
-     /*
-    public function get_listing($path='/', $token='', $secret='') {
-        $url = $this->dropbox_api.'/metadata/'.$this->mode.$path;
-        $content = $this->get($url, array(), $token, $secret);
-        $data = json_decode($content);
-        return $data;
+
+}
+
+class quizlet_search_form extends moodleform {
+    function definition() {
+        global $CFG;
+
+        $mform =& $this->_form;
+
+     $mform->addElement('text', 'searchtext', get_string('searchtext', 'quizletimport'),array('size'=>64));
+     $mform->setType('searchtext',PARAM_TEXT);
+     $mform->addElement('hidden', 'courseid');
+     $mform->addElement('hidden', 'caller');
+     $mform->setType('courseid',PARAM_INT);
+     $mform->setType('caller',PARAM_URL);
+     $buttons = array(); 
+     $buttons[] =& $mform->createElement('submit', 'searchtype',  get_string("searchmysets", "quizletimport"));
+     $buttons[] =& $mform->createElement('submit', 'searchtype',  get_string("searchtitles", "quizletimport"));
+     $buttons[] =& $mform->createElement('submit', 'searchtype',  get_string("searchusers", "quizletimport"));
+      $mform->addElement('group', 'buttonsgrp', '', $buttons, ' ', false);
+
     }
-    */
-
-
 }

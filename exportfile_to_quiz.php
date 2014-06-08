@@ -7,7 +7,7 @@
     require_once("../../lib/filelib.php");
 
     $id = required_param('id', PARAM_INT);      // Course Module ID
-    $quizletsets = optional_param_array('quizletset',array(), PARAM_ALPHANUMEXT);
+    $quizletsets = optional_param_array('selectedset',array(), PARAM_ALPHANUMEXT);
     $exporttype = optional_param('exporttype',0, PARAM_ALPHANUMEXT);
     $questiontypes =  optional_param_array('questiontype',array(), PARAM_ALPHANUMEXT);  
 	$activitytypes =  optional_param_array('activitytype',array(), PARAM_ALPHANUMEXT); 
@@ -58,7 +58,7 @@
     		$qsetname = $qset_params[1];
     		
 			 foreach($activitytypes as $activity){
-				$content.="name=$qsetname,activitytype=$activity,quizletset=$qsetid,mintime=0,showcountdown=0,showcompletion=0\n\n";
+				$content.="name=$qsetname,activitytype=$activity,quizletset=$qsetid,quizletsettitle=$qsetname,mintime=0,showcountdown=0,showcompletion=0\n\n";
 			}
 		}
 		send_file($content, $filename, 0, 0, true, true); 

@@ -101,6 +101,23 @@ function xmldb_quizletimport_upgrade($oldversion) {
         // Once we reach this point, we can store the new version and consider the module upgraded
         upgrade_mod_savepoint(true, 2014022300, 'quizletimport');
     }
+      // added showcompletion and showcountdown fields
+    if ($oldversion < 2014060800) {
+
+        // Define field activitytype to be added to quizletimport
+        $table = new xmldb_table('quizletimport');
+        $field = new xmldb_field('quizletsettitle', XMLDB_TYPE_CHAR, 255, null, null, null, '','quizletset');
+
+        // Add field showcountdown
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        
+
+        // Once we reach this point, we can store the new version and consider the module upgraded
+        upgrade_mod_savepoint(true, 2014060800, 'quizletimport');
+    }
 
     return true;
 }

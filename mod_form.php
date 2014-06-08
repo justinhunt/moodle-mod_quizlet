@@ -40,7 +40,7 @@ class mod_quizletimport_mod_form extends moodleform_mod {
      * Defines forms elements
      */
     public function definition() {
-    	global $CFG,$COURSE;
+    	global $CFG,$COURSE, $PAGE;
 
         $mform = $this->_form;
 		
@@ -82,9 +82,14 @@ class mod_quizletimport_mod_form extends moodleform_mod {
 			}
 		}
 
+		//get quizlet search form
+		//$search_form = new quizlet_search_form();
+		//$search_form->display();
+		//$data = $search_form->get_data();
 
 		//if authenticated fill our select box with users sets
 		//otherwise show a login/authorize link
+		/*
 		if($qiz->is_authenticated()){
 			$endpoint = 'users/@username@/sets';
 				$params = null;
@@ -95,7 +100,7 @@ class mod_quizletimport_mod_form extends moodleform_mod {
 					foreach ($mysets['data'] as $quizletset){
 						$options[$quizletset->id] = $quizletset->title;
 					}
-
+					
 					$qset = $mform->addElement('select', 'quizletset', get_string('usersets', 'quizletimport'), $options);
 					$qset->setMultiple(false);
 					$mform->setType('quizletset', PARAM_TEXT);
@@ -111,12 +116,30 @@ class mod_quizletimport_mod_form extends moodleform_mod {
 			 $mform->addElement('static', 'quizletauthorize', get_string('quizletloginlabel', 'quizletimport'), '<a href="' . $qiz->fetch_auth_url() . '">' . get_string('quizletlogin', 'quizletimport') . '</a>');
                          $mform->addElement('text', 'quizletset', get_string('quizletsetinput', 'quizletimport'),array('size' => '64'));
                          $mform->setType('quizletset', PARAM_TEXT);                
-                }
-  
+        }
+        */
+        
+      //our jump off link to the select screen
+   //   $mform->addElement('header', 'selectsetheader', get_string('selectset', 'quizletimport'));
+      $ssurl =  new moodle_url('/mod/quizletimport/selectset.php', array('courseid'=>$COURSE->id,'caller'=>$PAGE->url));
+	  $mform->addElement('static', 'selectset', get_string('selectset', 'quizletimport'), html_writer::link($ssurl,get_string('selectset', 'quizletimport')));
+	  
+	  //showing the current quizlet set
+	  $mform->addElement('text', 'quizletset', get_string('quizletsetid', 'quizletimport'),array('size' => '64'));
+      $mform->setType('quizletset', PARAM_TEXT);   
+      $mform->addElement('text', 'quizletsettitle', get_string('quizletsettitle', 'quizletimport'),array('size' => '64'));
+      $mform->setType('quizletsettitle', PARAM_TEXT); 
+   //   $mform->setExpanded('selectsetheader'); 
+   //   $mform->closeHeaderBefore('activitytype');
+      
+     
+
+  /*
 		//if along the way we got an error back from quizlet, lets display it.
 		if($qmessage){
 			$mform->addElement('static', 'quizleterror', get_string('quizleterror', 'quizletimport'), $qmessage);
 		}
+		*/
 		
 		//what kind of quizlet activity are we going to display
 		$activities = array($qiz::TYPE_CARDS => get_string('acttype_flashcards', 'quizletimport'),
@@ -150,4 +173,18 @@ class mod_quizletimport_mod_form extends moodleform_mod {
         // add standard buttons, common to all modules
         $this->add_action_buttons();
     }
-}
+    
+    public function definition_after_data() {
+        parent::definition_after_data();
+        $selectedset = optional_param('selectedset', '', PARAM_TEXT);
+        if(!empty($selectedset)){
+        	$selectedarray = explode('-',$selectedset);
+	        $mform =& $this->_form;
+	        $qset =& $mform->getElement('quizletset');
+	        $qsettitle =& $mform->getElement('quizletsettitle');
+	        $qset->setValue($selectedarray[0]);
+	        $qsettitle->setValue($selectedarray[1]);
+	    }//end of if block
+	}//end of function
+
+}//end of calss

@@ -129,6 +129,7 @@ require_once($CFG->dirroot.'/mod/quizletimport/quizlet.php');
 	}
     $data->activitytype=$atype;
     $data->quizletset=$theparams['quizletset'];
+    $data->quizletsettitle=$theparams['quizletsettitle'];
     $data->mintime=$theparams['mintime'];
     $data->showcompletion=$theparams['showcompletion'];
     $data->showcountdown=$theparams['showcountdown'];
