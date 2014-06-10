@@ -439,4 +439,20 @@ class quizlet_search_form extends moodleform {
       $mform->addElement('group', 'buttonsgrp', '', $buttons, ' ', false);
 
     }
+	 public function definition_after_data() {
+		global $COURSE;
+        parent::definition_after_data();
+        $courseid = optional_param('courseid', 0, PARAM_INT);
+		$caller = optional_param('caller', '', PARAM_URL);
+
+		$mform =& $this->_form;
+		if($courseid > 0){
+			$el_courseid =& $mform->getElement('courseid');
+			$el_courseid->setValue($courseid);
+		}
+		if(!empty($caller)){
+			$el_caller =& $mform->getElement('caller');
+			$el_caller->setValue($caller);
+		}
+	}//end of function
 }
