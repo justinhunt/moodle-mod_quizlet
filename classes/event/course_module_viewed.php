@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,22 +14,34 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
- * Defines the version of quizletimport
- *
- * This code fragment is called by moodle_needs_upgrading() and
- * /admin/index.php
+ * The mod_page course module viewed event.
  *
  * @package    mod_quizletimport
  * @copyright  2014 Justin Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace mod_quizletimport\event;
 defined('MOODLE_INTERNAL') || die();
 
-$module->version   = 2014062000;               // If version == 0 then module will not be installed
-//$module->version   = 2010032200;      // The current module version (Date: YYYYMMDDXX)
-$module->requires  = 2010031900;      // Requires this Moodle version
-$module->cron      = 0;               // Period for cron to check this module (secs)
-$module->component = 'mod_quizletimport'; // To check on upgrade, that module sits in correct place
+/**
+ * The mod_quizletimport course module viewed event class.
+ *
+ * @package    mod_quizletimport
+ * @since      Moodle 2.7
+ * @copyright  2014 Justin Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class course_module_viewed extends \core\event\course_module_viewed {
+
+    /**
+     * Init method.
+     */
+    protected function init() {
+        $this->data['crud'] = 'r';
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
+        $this->data['objecttable'] = 'quizletimport';
+    }
+}
+

@@ -57,7 +57,20 @@ $context = context_module::instance($cm->id);
 global $USER;
 
 //this is important cos we use this to figure out how long student was on page
-add_to_log($course->id, 'quizletimport', 'view', "view.php?id={$cm->id}", $quizletimport->name, $cm->id);
+if($CFG->version<2014051200){
+	add_to_log($course->id, 'quizletimport', 'view', "view.php?id={$cm->id}", $quizletimport->name, $cm->id);
+}else{
+	// Trigger module viewed event.
+	$event = \mod_quizletimport\event\course_module_viewed::create(array(
+	   'objectid' => $quizletimport->id,
+	   'context' => $context
+	));
+	$event->add_record_snapshot('course_modules', $cm);
+	$event->add_record_snapshot('course', $course);
+	$event->add_record_snapshot('quizletimport', $quizletimport);
+	$event->trigger();
+}
+
 
 
 /// Print the page header
