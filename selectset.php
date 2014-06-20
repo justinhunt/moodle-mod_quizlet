@@ -28,6 +28,8 @@ $data = $search_form->get_data();
 //make double sure we have the course id in id
 if(empty($data->courseid)){
 	$courseid = optional_param('courseid',$COURSE->id, PARAM_INT);
+}else{
+	$courseid = $data->courseid;
 }
 //make sure we keep the caller URL
 if(!empty($data->caller)){
