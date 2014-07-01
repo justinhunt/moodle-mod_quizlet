@@ -46,10 +46,9 @@ $context = context_module::instance($cm->id);
 
 global $DB,$USER;
 
-$sql = "SELECT MAX(time) FROM {log} WHERE cmid=" . $cm->id
+$sql = "SELECT MAX(time) FROM {quizletimport_log} WHERE cmid=" . $cm->id
 			. " AND course=" . $course->id 
 			. " AND userid=" . $USER->id 
-			. " AND module='quizletimport'" 
 			. " AND action='view'";
 			
 $starttime = $DB->get_field_sql($sql);

@@ -71,6 +71,16 @@ if($CFG->version<2014051200){
 	$event->trigger();
 }
 
+// now we record the time viewed like this
+//NB this is very similar to the old log method(we just removed the 'module' check/field)
+$viewincident = new stdClass();
+$viewincident->time         = time();
+$viewincident->cmid = $cm->id;
+$viewincident->course = $course->id;
+$viewincident->userid = $USER->id;
+$viewincident->action = 'view';
+$DB->insert_record('quizletimport_log', $viewincident, false);
+
 
 
 /// Print the page header

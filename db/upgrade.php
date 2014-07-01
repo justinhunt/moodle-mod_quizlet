@@ -118,6 +118,35 @@ function xmldb_quizletimport_upgrade($oldversion) {
         // Once we reach this point, we can store the new version and consider the module upgraded
         upgrade_mod_savepoint(true, 2014060800, 'quizletimport');
     }
+    
+     if ($oldversion < 2014070101) {
+
+        // Define table timedpage_log to be created.
+        $table = new xmldb_table('quizletimport_log');
+
+        // Adding fields to table timedpage_log.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('time', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('cmid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('action', XMLDB_TYPE_CHAR, '40', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table timedpage_log.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Adding indexes to table timedpage_log.
+        $table->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
+
+        // Conditionally launch create table for timedpage_log.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Timedpage savepoint reached.
+        upgrade_mod_savepoint(true, 2014070101, 'quizletimport');
+    }
+
 
     return true;
 }

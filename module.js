@@ -24,6 +24,34 @@
 
 M.mod_quizletimport = M.mod_quizletimport || {};
 
+
+M.mod_quizletimport.iframehelper = {
+	IF: null,
+	SB: null,
+	
+    /**
+     * @param Y the YUI object
+     * @param start, the timer starting time, in seconds.
+     * @param preview, is this a quiz preview?
+     */
+    init: function(Y,iframeref, selectboxref) {
+    	// console.log('quizletimport:start:' + start +':countdown:' + showcountdown + ':showcompletion:' + showcompletion);
+        M.mod_quizletimport.iframehelper.IF = Y.one('#' + iframeref);
+        M.mod_quizletimport.iframehelper.SB = Y.one('#' + selectboxref);
+   
+    },
+    
+    update: function(){
+    	var quizletset = M.mod_quizletimport.iframehelper.SB.get('value');
+    	if(quizletset){
+    		quizletset = quizletset.split('-')[0];
+    	}
+    	var newsrc = 'https://quizlet.com/' + quizletset + '/flashcards/embedv2';
+    	M.mod_quizletimport.iframehelper.IF.setAttribute('src',newsrc);
+    }
+
+}; 
+
 // Code for updating the countdown timer that is used on timed quizzes.
 M.mod_quizletimport.timer = {
     // YUI object.

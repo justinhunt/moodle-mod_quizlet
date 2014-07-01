@@ -75,14 +75,33 @@ echo $OUTPUT->header();
 
 echo $OUTPUT->footer();
 
+
+ /**
+ * Displays any errors from the previous search
+ * 
+ * @param string $qmessage errors from the previous search.
+ */
 function qdisplayerror($qmessage) {
      echo $qmessage;
 }//end of func
 
+  /**
+ * Output the two forms required for this page
+ * i) the search form (searching quizlet)
+ * ii) the select form (selecting set and returning to caller)
+ * 
+ * @param quizlet $qiz the quizlet object
+ * @param int $courseid the course id
+ * @param quizlet_search_form $search_form the quizlet search form
+ * @param stdClass $data the submitted data from the previous search
+ * @param string $caller the url of the page that we should return the data to
+ * @return string HTML content.
+ */
 function qdisplayforms($qiz, $courseid, $search_form, $data, $caller){
 
-global $OUTPUT;
+	global $OUTPUT, $PAGE;
 
+	//perform our search based on search form submission (if there was one)
 	$param_searchtext = '';
 	$param_searchtype = '';
 	if(!empty($data->searchtext)){
@@ -95,6 +114,7 @@ global $OUTPUT;
 	//if authenticated fill our select box with users sets
 	//otherwise show a login/authorize link
 	$select = "";
+	$selectboxname = 'selectedset';
 	if($qiz->is_authenticated()){
 		//default is to list our sets
 		$searchresult = $qiz->do_search($param_searchtext,$param_searchtype);
@@ -105,39 +125,61 @@ global $OUTPUT;
 			}else{
 				$setdata = $searchresult['data']->sets;
 			}
-			$select_qselect = $qiz->fetch_set_selectlist($setdata,'selectedset',false);
+			$select_qselect = $qiz->fetch_set_selectlist($setdata,$selectboxname,false);
 		}else{
 			//complain that we got no sets here
 			echo "NO SETS!!!";
 		}
 	}
 	
-
-echo $OUTPUT->heading(get_string('selectset','quizletimport'));
-echo $OUTPUT->box_start('generalbox');
-$search_form->display();
-echo $OUTPUT->box_end();
-echo $OUTPUT->box_start('generalbox');
-//$submit = html_writer::tag('input',null,array('type'=>'submit','value'=>'Use this set','name'=>'selectsetsubmit','name'=>'selectsetsubmit'));
-
-$caller = new moodle_url($caller);
- $params = $caller->params();
- $fields="";
-  $actionurl = $caller->out_omit_querystring(true);
- foreach ($params as $var => $val) {
-            $fields .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => $var, 'value' => $val));
-}
-$fields .= $select_qselect;
-$submit = html_writer::tag('input',null,array('type'=>'submit','value'=>'Use this set','name'=>'selectsetsubmit','name'=>'selectsetsubmit'));
-$cancel =  html_writer::link($caller,get_string('cancel'));
-$fields .= html_writer::start_tag('div');
-$fields .= $submit . $cancel;
-$fields .= html_writer::end_tag('div');
-echo html_writer::tag('form',$fields,array('action'=>$actionurl,'method'=>'get'));
+	//begin the output
+	echo $OUTPUT->heading(get_string('selectset','quizletimport'));
+	echo $OUTPUT->box_start('generalbox');
+	//display the quizlet search form
+	$search_form->display();
+	echo $OUTPUT->box_end();
+	echo $OUTPUT->box_start('generalbox');
+	//$submit = html_writer::tag('input',null,array('type'=>'submit','value'=>'Use this set','name'=>'selectsetsubmit','name'=>'selectsetsubmit'));
+	
+	//prepare the select form
+	//first prepare the caller url as action, and params as hidden fields in form submission
+	$caller = new moodle_url($caller);
+	$params = $caller->params();
+	$fields="";
+	$actionurl = $caller->out_omit_querystring(true);
+	 foreach ($params as $var => $val) {
+				$fields .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => $var, 'value' => $val));
+	}
+	
+	//add the select box containing results of previous search (if any)
+	$fields .= $select_qselect;
+	
+	//prepare the two buttons (submit and cancel) 
+	$submit = html_writer::tag('input',null,array('type'=>'submit','value'=>'Use this set','name'=>'selectsetsubmit','name'=>'selectsetsubmit'));
+	$preview = html_writer::tag('input',null,array('type'=>'button','value'=>'Preview below','name'=>'selectsetsubmit','onClick'=>'M.mod_quizletimport.iframehelper.update()'));
+	$cancel =  html_writer::link($caller,get_string('cancel'));
+	$fields .= html_writer::start_tag('div');
+	$fields .= $submit . $preview . $cancel;
+	$fields .= html_writer::end_tag('div');
+	
+	//send the form out to browser and finish up
+	echo html_writer::tag('form',$fields,array('action'=>$actionurl,'method'=>'get'));
 
 	//echo $OUTPUT->close_window_button(get_string('cancel'));
 	echo $OUTPUT->box_end();
 	echo $OUTPUT->box_start('generalbox');
     echo $OUTPUT->box_end();
+    
+    //add our preview iframe box
+    //set up js
+    $iframename = "quizletimport_sampleset_flashcards";
+    $jsoptions = array($iframename,$selectboxname);
+    $PAGE->requires->js_init_call('M.mod_quizletimport.iframehelper.init', $jsoptions, false);
+    //output the iframe
+    echo $OUTPUT->box_start('generalbox');
+    $iframe = "<iframe id='$iframename' name='$iframename' src=\"\" height=\"350\" width=\"550\" style=\"border:0;\"></iframe>";
+    echo $iframe;
+    echo $OUTPUT->box_end();
+    
 }
 ?>
