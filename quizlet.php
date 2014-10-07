@@ -353,6 +353,23 @@ class quizlet {
 		return $iframe;
 	}
 	
+	public function fetch_set_as_array($setdata_array){
+		$retarray = array();
+		foreach ($setdata_array as $quizletset){
+					//NB ugly delimeter that passes all the way through. urrrghh
+					//but it is just to create a viewable name, so no stress if the name gets messed up
+					if(empty($quizletset) || empty($quizletset->id)){continue;}
+					$qdescription = $quizletset->title;
+					$qdescription  .= ' (' . $quizletset->term_count . ')';
+					$qdescription  .= ' Author:' . $quizletset->created_by;
+					$qdescription  .= ' images:' . ($quizletset->has_images ? 'yes' : 'no') ;
+					$qkey = $quizletset->id . "-"  . preg_replace("/[^A-Za-z0-9]/", "_", $quizletset->title);
+					$retarray[$qkey] = $qdescription;
+		}
+		return $retarray;
+	
+	}
+	
 	public function fetch_set_selectlist($setdata_array,$dom_id,$multiselect=false){
 		$multiple = ($multiselect ? 'multiple' : '');
 		if(!$multiple){
@@ -363,6 +380,14 @@ class quizlet {
 			$multiple = "multiple";
 		}
 		
+		$usedata = $this->fetch_set_as_array($setdata_array);
+		$select = "<select name='" . $selectname ."' id='" . $dom_id . "' " . $multiple . " size='10'>";
+		foreach ($usedata as $key=>$description){
+			$select .= "<option value='" . $key . "'>" . $description . "</option>";
+		}
+		$select .= "</select>";
+		return $select;
+		/*
 		$select = "<select name='" . $selectname ."' id='" . $dom_id . "' " . $multiple . " size='10'>";
 				foreach ($setdata_array as $quizletset){
 					//NB ugly delimeter that passes all the way through. urrrghh
@@ -375,7 +400,7 @@ class quizlet {
 					$select .= "<option value='" . $quizletset->id . "-"  . preg_replace("/[^A-Za-z0-9]/", "_", $quizletset->title ).  "'>" . $qdescription . "</option>";
 				}
 				$select .= "</select>";
-				return $select;
+		*/
 	}
 	
 	//do a basic search from the quizlet_search_form

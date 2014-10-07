@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Prints a particular instance of quizletimport
+ * Receives a JS communication from browser that page is complete.
  *
  * You can have a rather longer description of the file as well,
  * if you like, and it can span multiple lines.

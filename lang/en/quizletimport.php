@@ -19,11 +19,9 @@
 /**
  * English strings for quizletimport
  *
- * You can have a rather longer description of the file as well,
- * if you like, and it can span multiple lines.
  *
  * @package    mod_quizletimport
- * @copyright  2011 Your Name
+ * @copyright  2014 Justin Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -89,7 +87,7 @@ $string['searchusers'] = 'Search by User';
 $string['searchmysets'] = 'Fetch My Sets';
 $string['searchtext'] = 'Search Terms';
 
-$string['selectset'] = 'Select a Quizlet Set';
+$string['selectset'] = 'Search for Quizlet Sets';
 $string['quizletsetid'] = 'Quizlet Set ID';
 $string['quizletsettitle'] = 'Quizlet Set Title';
 
