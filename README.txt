@@ -31,7 +31,7 @@ The settings for the QuizletImport module can be found at:
 The most important of the settings are the 2 API keys from Quizlet.com. 
 You need to make these over at quizlet.com once you are logged in there. They are free.
 i)  Go to https://quizlet.com/api-dashboard
-ii) Create an "application", and call it PoodLL (or anything you like).
+ii) Create an "application", and call it "Quizlet to Moodle" (or anything you like).
 iii) For the redirect URL of your site, just use the base URL of your Moodle site. eg.
 http://mysite.com/moodle or http://moodle.mysite.com
 iii) Copy and paste both keys into the settings pages for the mod.

@@ -147,8 +147,7 @@ class mod_quizletimport_mod_form extends moodleform_mod {
 				$qiz::TYPE_SPACERACE=>get_string('acttype_spacerace', 'quizletimport'),
 				$qiz::TYPE_TEST=>get_string('acttype_test', 'quizletimport'),
 				$qiz::TYPE_SPELLER=>get_string('acttype_speller', 'quizletimport'),
-				$qiz::TYPE_LEARN=>get_string('acttype_learn', 'quizletimport'),
-				$qiz::TYPE_MOODLE_QUIZ=>get_string('acttype_moodlequiz', 'quizletimport'));
+				$qiz::TYPE_LEARN=>get_string('acttype_learn', 'quizletimport'));
 				
 		$select = $mform->addElement('select', 'activitytype', get_string('activitytype', 'quizletimport'), $activities);
 		
