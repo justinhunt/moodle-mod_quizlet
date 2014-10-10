@@ -97,8 +97,11 @@ $PAGE->set_context($context);
 
 $qih = new quizletimport_helper($quizletimport,$course,$cm);
 
+//get our renderer
+$renderer = $PAGE->get_renderer('mod_quizletimport');
+
 // Output starts here
-echo $OUTPUT->header();
+echo $renderer->header();
 
 if ($quizletimport->intro) { // Conditions to show the intro can change to look for own settings or whatever
     echo $OUTPUT->box(format_module_intro('quizletimport', $quizletimport, $cm->id), 'generalbox mod_introbox', 'quizletimportintro');
@@ -179,4 +182,5 @@ $timer = html_writer::tag('div', get_string('timeleft', 'quiz') . ' ' .
 echo $timer;
 
 // Finish the page
-echo $OUTPUT->footer();
+echo $renderer->footer();
+

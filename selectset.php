@@ -68,7 +68,8 @@ if(!empty($data->caller)){
 //prepare rest of page and data
 $url = new moodle_url('/mod/quizletimport/selectset.php', array('courseid'=>$courseid,'caller'=>$caller));
 $PAGE->set_url($url);
-$PAGE->set_pagelayout('standard');
+$PAGE->set_pagelayout('popup');
+$renderer = $PAGE->get_renderer('mod_quizletimport');
 
 
 
@@ -89,18 +90,18 @@ $PAGE->set_pagelayout('standard');
                 }   
      }
 	
-echo $OUTPUT->header();
+echo $renderer->header();
 
 	if($qmessage){
 		qdisplayerror($qmessage);
 	}elseif(!$qiz->is_authenticated()){
-		$authlink= '<a href="' . $qiz->fetch_auth_url() . '">' . get_string('quizletlogin', 'quizletimport') . '</a>';
+		$authlink= '<h3> <a href="' . $qiz->fetch_auth_url() . '">' . get_string('quizletlogin', 'quizletimport') . '</a></h3>';
          qdisplayerror($authlink);
 	}else{
 		qdisplayforms($qiz, $courseid, $search_form, $data, $caller);
 	}
 
-echo $OUTPUT->footer();
+echo $renderer->footer();
 
 
  /**
@@ -127,7 +128,8 @@ function qdisplayerror($qmessage) {
 function qdisplayforms($qiz, $courseid, $search_form, $data, $caller){
 
 	global $OUTPUT, $PAGE;
-
+        $renderer = $PAGE->get_renderer('mod_quizletimport');
+        
 	//perform our search based on search form submission (if there was one)
 	$param_searchtext = '';
 	$param_searchtype = '';
@@ -160,12 +162,12 @@ function qdisplayforms($qiz, $courseid, $search_form, $data, $caller){
 	}
 	
 	//begin the output
-	echo $OUTPUT->heading(get_string('selectset','quizletimport'));
-	echo $OUTPUT->box_start('generalbox');
+	echo $renderer->heading(get_string('selectset','quizletimport'));
+	echo $renderer->box_start('generalbox');
 	//display the quizlet search form
 	$search_form->display();
-	echo $OUTPUT->box_end();
-	echo $OUTPUT->box_start('generalbox');
+	echo $renderer->box_end();
+	echo $renderer->box_start('generalbox');
 	//$submit = html_writer::tag('input',null,array('type'=>'submit','value'=>'Use this set','name'=>'selectsetsubmit','name'=>'selectsetsubmit'));
 	
 	//prepare the select form
@@ -182,10 +184,16 @@ function qdisplayforms($qiz, $courseid, $search_form, $data, $caller){
 	$fields .= $select_qselect;
 	
 	//prepare the two buttons (submit and cancel) 
-	$submit = html_writer::tag('input',null,array('type'=>'submit','value'=>'Use this set','name'=>'selectsetsubmit','name'=>'selectsetsubmit'));
-	$preview = html_writer::tag('input',null,array('type'=>'button','value'=>'Preview below','name'=>'selectsetsubmit','onClick'=>'M.mod_quizletimport.iframehelper.update()'));
-	$cancel =  html_writer::link($caller,get_string('cancel'));
-	$fields .= html_writer::start_tag('div');
+        $popup=true;
+        if($popup){
+            $submit = html_writer::tag('input',null,array('type'=>'button','value'=>'Use this set','name'=>'selectsetsubmit','onClick'=>'M.mod_quizletimport.selectformhelper.closeandupdate()'));
+            $cancel =  html_writer::link('#',get_string('cancel'),array('onClick'=>'M.mod_quizletimport.selectformhelper.justclose()'));
+        }else{
+            $submit = html_writer::tag('input',null,array('type'=>'submit','value'=>'Use this set','name'=>'selectsetsubmit','name'=>'selectsetsubmit'));
+            $cancel =  html_writer::link($caller,get_string('cancel'));
+        }
+        $preview = html_writer::tag('input',null,array('type'=>'button','value'=>'Preview below','name'=>'selectsetsubmit','onClick'=>'M.mod_quizletimport.selectformhelper.updateiframe()'));
+        $fields .= html_writer::start_tag('div');
 	$fields .= $submit . $preview . $cancel;
 	$fields .= html_writer::end_tag('div');
 	
@@ -193,20 +201,19 @@ function qdisplayforms($qiz, $courseid, $search_form, $data, $caller){
 	echo html_writer::tag('form',$fields,array('action'=>$actionurl,'method'=>'get'));
 
 	//echo $OUTPUT->close_window_button(get_string('cancel'));
-	echo $OUTPUT->box_end();
-	echo $OUTPUT->box_start('generalbox');
-    echo $OUTPUT->box_end();
+	echo $renderer->box_end();
+	echo $renderer->box_start('generalbox');
+    echo $renderer->box_end();
     
     //add our preview iframe box
     //set up js
     $iframename = "quizletimport_sampleset_flashcards";
     $jsoptions = array($iframename,$selectboxname);
-    $PAGE->requires->js_init_call('M.mod_quizletimport.iframehelper.init', $jsoptions, false);
+    $PAGE->requires->js_init_call('M.mod_quizletimport.selectformhelper.init', $jsoptions, false);
     //output the iframe
-    echo $OUTPUT->box_start('generalbox');
-    $iframe = "<iframe id='$iframename' name='$iframename' src=\"\" height=\"350\" width=\"550\" style=\"border:0;\"></iframe>";
+    echo $renderer->box_start('generalbox');
+    $iframe = "<iframe id='$iframename' name='$iframename' src=\"\" height=\"300\" width=\"500\" style=\"border:0;\"></iframe>";
     echo $iframe;
-    echo $OUTPUT->box_end();
-    
+    echo $renderer->box_end();
 }
 ?>

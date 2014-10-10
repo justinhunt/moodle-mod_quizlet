@@ -43,9 +43,18 @@ class mod_quizletimport_mod_form extends moodleform_mod {
     	global $CFG,$COURSE, $PAGE;
 
         $mform = $this->_form;
-		
-		$config = get_config('quizletimport');
-
+	//get our config and renderer	
+        $config = get_config('quizletimport');
+        $renderer = $PAGE->get_renderer('mod_quizletimport');
+        
+        //load up some JS to help us select/update quizlet sets
+        //set the js to the page
+       
+        $opts = array();
+        $opts['qidbox']='id_' . 'quizletset';
+        $opts['qnamebox']='id_' . 'quizletsettitle';
+        $PAGE->requires->js_init_call('M.mod_quizletimport.selectionhelper.init', array($opts), false);
+        
         //-------------------------------------------------------------------------------
         // Adding the "general" fieldset, where all the common settings are showed
         $mform->addElement('header', 'general', get_string('general', 'form'));
@@ -122,8 +131,12 @@ class mod_quizletimport_mod_form extends moodleform_mod {
       //our jump off link to the select screen
    //   $mform->addElement('header', 'selectsetheader', get_string('selectset', 'quizletimport'));
       $ssurl =  new moodle_url('/mod/quizletimport/selectset.php', array('courseid'=>$COURSE->id,'caller'=>$PAGE->url));
-	  $mform->addElement('static', 'selectset', get_string('selectset', 'quizletimport'), html_writer::link($ssurl,get_string('selectset', 'quizletimport')));
-	  
+       //$mform->addElement('static', 'selectset', get_string('selectset', 'quizletimport'), html_writer::link($ssurl,get_string('selectset', 'quizletimport')));
+      $mform->addElement('static', 'selectset', get_string('selectset', 'quizletimport'), $renderer->show_popup_page($ssurl,get_string('selectset', 'quizletimport')));
+      
+      
+      
+      
 	  //showing the current quizlet set
 	  $mform->addElement('text', 'quizletset', get_string('quizletsetid', 'quizletimport'),array('size' => '64'));
       $mform->setType('quizletset', PARAM_TEXT);   

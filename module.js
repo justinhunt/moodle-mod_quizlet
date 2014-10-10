@@ -24,30 +24,82 @@
 
 M.mod_quizletimport = M.mod_quizletimport || {};
 
+M.mod_quizletimport.selectionhelper = {
+    Y: null,
+    qidbox: null,
+    qnamebox: null,
+    
+    init: function(Y, opts) {
+    	M.mod_quizletimport.selectionhelper.Y = Y;
+        M.mod_quizletimport.selectionhelper.qidbox = Y.one('#' + opts['qidbox']);
+        M.mod_quizletimport.selectionhelper.qnamebox = Y.one('#' + opts['qnamebox']);
+    },
+    update: function(idvalue,namevalue){
+        M.mod_quizletimport.selectionhelper.qidbox.setAttribute('value',idvalue);
+        M.mod_quizletimport.selectionhelper.qnamebox.setAttribute('value',namevalue);
+    }
+};
 
-M.mod_quizletimport.iframehelper = {
+M.mod_quizletimport.selectformhelper = {
 	IF: null,
 	SB: null,
 	
     /**
      * @param Y the YUI object
-     * @param start, the timer starting time, in seconds.
-     * @param preview, is this a quiz preview?
+     * @param iframeref, the timer starting time, in seconds.
+     * @param selectboxref, is this a quiz preview?
      */
     init: function(Y,iframeref, selectboxref) {
     	// console.log('quizletimport:start:' + start +':countdown:' + showcountdown + ':showcompletion:' + showcompletion);
-        M.mod_quizletimport.iframehelper.IF = Y.one('#' + iframeref);
-        M.mod_quizletimport.iframehelper.SB = Y.one('#' + selectboxref);
+        M.mod_quizletimport.selectformhelper.IF = Y.one('#' + iframeref);
+        M.mod_quizletimport.selectformhelper.SB = Y.one('#' + selectboxref);
    
     },
-    
-    update: function(){
-    	var quizletset = M.mod_quizletimport.iframehelper.SB.get('value');
+    getselectid: function(){
+         
+        var quizletset = M.mod_quizletimport.selectformhelper.SB.get('value');
+    	if(quizletset){
+    		quizletset = quizletset.split('-')[0];
+                //console.log ('qid:' + quizletset);
+                return quizletset;
+    	}else{
+            return '';
+        }
+        
+    },
+    getselectname: function(){
+        var quizletset = M.mod_quizletimport.selectformhelper.SB.get('value');
+    	if(quizletset){
+    		quizletsetname = quizletset.split('-')[1];
+                //console.log ('qname:' + quizletsetname);
+                return quizletsetname;
+    	}else{
+            return '';
+        }
+        
+    },
+    justclose: function(){
+        window.close();
+        return false;
+    },
+    closeandupdate: function(){
+         //console.log ('gothere:');
+         var qid = this.getselectid();
+         var qname = this.getselectname(); 
+            try {
+                window.opener.M.mod_quizletimport.selectionhelper.update(qid,qname);
+            }
+            catch (err) {console.log(err);}
+            window.close();
+            return false;
+    },
+    updateiframe: function(){
+    	var quizletset = M.mod_quizletimport.selectformhelper.SB.get('value');
     	if(quizletset){
     		quizletset = quizletset.split('-')[0];
     	}
     	var newsrc = 'https://quizlet.com/' + quizletset + '/flashcards/embedv2';
-    	M.mod_quizletimport.iframehelper.IF.setAttribute('src',newsrc);
+    	M.mod_quizletimport.selectformhelper.IF.setAttribute('src',newsrc);
     }
 
 }; 

@@ -381,7 +381,7 @@ class quizlet {
 		}
 		
 		$usedata = $this->fetch_set_as_array($setdata_array);
-		$select = "<select name='" . $selectname ."' id='" . $dom_id . "' " . $multiple . " size='10'>";
+		$select = "<select name='" . $selectname ."' id='" . $dom_id . "' " . $multiple . " size='7'>";
 		foreach ($usedata as $key=>$description){
 			$select .= "<option value='" . $key . "'>" . $description . "</option>";
 		}
