@@ -90,6 +90,7 @@ $string['searchtext'] = 'Search Terms';
 $string['selectset'] = 'Search for Quizlet Sets';
 $string['quizletsetid'] = 'Quizlet Set ID';
 $string['quizletsettitle'] = 'Quizlet Set Title';
-
+$string['quizletimport:addinstance'] = 'Add a new Quizlet Import activity';
+$string['quizletimport:view'] = 'View Quizlet Import activity';
 
 
