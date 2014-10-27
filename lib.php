@@ -104,14 +104,35 @@ global $CFG;
 require_once($CFG->dirroot.'/mod/quizletimport/quizlet.php');
 
     // Gather the required info.
-    $data = new stdClass();
-    $data->course = $uploadinfo->course->id;
+	 //get params from passed in DND content and create data object
+    $stringcontent = clean_param($uploadinfo->content, PARAM_TEXT);
+    $data = quizletimport_parse_instancestring($stringcontent);
+    
+	//add data dnd provides about course section/naming etc
+	$data->course = $uploadinfo->course->id;
     $data->name = $uploadinfo->displayname;
     $data->intro = '<p>'.$uploadinfo->displayname.'</p>';
     $data->introformat = FORMAT_HTML;
-    //get params from passed in DND content
-    $stringcontent = clean_param($uploadinfo->content, PARAM_TEXT);
-    $temparray = explode(',', $stringcontent);
+    $data->coursemodule = $uploadinfo->coursemodule;
+    
+	//store in DB
+	return quizletimport_add_instance($data, null);
+}
+
+/**
+ * Convenience function to parse a csv string to a data object for quizletimportcreation
+ * called from dndupload and from quizlet block
+ *
+ * @param string $stringdata csv list of properties, as passed in dnd file
+ * @return object data object containing most of details to make a quizletimport instance 
+ */
+function quizletimport_parse_instancestring($stringdata){
+	global $CFG;
+//require oauthlib for quizlet
+require_once($CFG->dirroot.'/mod/quizletimport/quizlet.php');
+
+	$data = new stdClass();
+    $temparray = explode(',', $stringdata);
     $theparams = array();
     foreach ($temparray as $result) {
         $p = explode('=', $result);
@@ -128,14 +149,14 @@ require_once($CFG->dirroot.'/mod/quizletimport/quizlet.php');
 		case 'learn' : $atype = quizlet::TYPE_LEARN; break;
 	}
     $data->activitytype=$atype;
+	$data->name=$theparams['name'] . ': '  . $theparams['activitytype'];
     $data->quizletset=$theparams['quizletset'];
     $data->quizletsettitle=$theparams['quizletsettitle'];
     $data->mintime=$theparams['mintime'];
     $data->showcompletion=$theparams['showcompletion'];
     $data->showcountdown=$theparams['showcountdown'];
-    $data->coursemodule = $uploadinfo->coursemodule;
-    return quizletimport_add_instance($data, null);
-}
+	return $data;
+} 
 
 /**
  * Updates an instance of the quizletimport in the database
