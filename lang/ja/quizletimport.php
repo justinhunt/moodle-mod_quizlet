@@ -75,9 +75,9 @@ $string['exportentriestoxml'] = 'Quizletセットを小テスト（XML形式）�
 $string['exportfile'] = 'Quizletセットを小テスト（Moodleインポート形式）に出力する';
 $string['exportdragdrop'] = 'Quizletセットを小テスト（ドラッグ&ドロップ形式）に出力する';
 $string['createmquiz'] = 'Moodle小テストを作成する';
-$string['shortanswer'] = '短答式';
-$string['shortanswer_0'] = '短答式（大文字小文字をチェックする）';
-$string['shortanswer_1'] = '短答式（大文字小文字をチェックしない）';
+$string['shortanswer'] = '記述問題';
+$string['shortanswer_0'] = '記述問題（大文字小文字をチェックする）';
+$string['shortanswer_1'] = '記述問題（大文字小文字をチェックしない）';
 $string['multichoice'] = '多肢選択';
 $string['defmintime_heading'] = '活動毎の最小学習時間（秒）';
 $string['defcompletion_heading'] = 'デフォルトの完了チェック';
@@ -89,7 +89,7 @@ $string['searchtext'] = '用語を検索する';
 
 $string['selectset'] = 'Quizletセットを検索する';
 
-$string['usethisset'] = '決定';
+$string['usethisset'] = 'このセットを使用する';
 $string['previewbelow'] = 'プレビュー';
 
 $string['quizletsetid'] = 'QuizletセットのID番号';
