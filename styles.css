@@ -22,3 +22,7 @@
 #quizletimport-timer.timeleft0 {background: #00ff00;}
 #quizletimport-timer {text-align: center; margin-top: 1em;}
 #quizletimport-completed {text-align: center; margin-top: 1em; background: #F4C63f;}
+
+.cancellink {
+	padding-left: 10px;
+}

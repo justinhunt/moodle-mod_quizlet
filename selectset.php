@@ -186,13 +186,13 @@ function qdisplayforms($qiz, $courseid, $search_form, $data, $caller){
 	//prepare the two buttons (submit and cancel) 
         $popup=true;
         if($popup){
-            $submit = html_writer::tag('input',null,array('type'=>'button','value'=>'Use this set','name'=>'selectsetsubmit','onClick'=>'M.mod_quizletimport.selectformhelper.closeandupdate()'));
-            $cancel =  html_writer::link('#',get_string('cancel'),array('onClick'=>'M.mod_quizletimport.selectformhelper.justclose()'));
+            $submit = html_writer::tag('input',null,array('type'=>'button','value'=>get_string('usethisset','quizletimport'),'name'=>'selectsetsubmit','onClick'=>'M.mod_quizletimport.selectformhelper.closeandupdate()'));
+            $cancel =  html_writer::link('#',get_string('cancel'),array('onClick'=>'M.mod_quizletimport.selectformhelper.justclose()','class'=>'cancellink'));
         }else{
-            $submit = html_writer::tag('input',null,array('type'=>'submit','value'=>'Use this set','name'=>'selectsetsubmit','name'=>'selectsetsubmit'));
-            $cancel =  html_writer::link($caller,get_string('cancel'));
+            $submit = html_writer::tag('input',null,array('type'=>'submit','value'=>get_string('usethisset','quizletimport'),'name'=>'selectsetsubmit','name'=>'selectsetsubmit'));
+            $cancel =  html_writer::link($caller,get_string('cancel'),array('class'=>'cancellink'));
         }
-        $preview = html_writer::tag('input',null,array('type'=>'button','value'=>'Preview below','name'=>'selectsetsubmit','onClick'=>'M.mod_quizletimport.selectformhelper.updateiframe()'));
+        $preview = html_writer::tag('input',null,array('type'=>'button','value'=>get_string('previewbelow','quizletimport'),'name'=>'selectsetsubmit','onClick'=>'M.mod_quizletimport.selectformhelper.updateiframe()'));
         $fields .= html_writer::start_tag('div');
 	$fields .= $submit . $preview . $cancel;
 	$fields .= html_writer::end_tag('div');

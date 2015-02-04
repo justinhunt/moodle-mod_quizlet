@@ -88,6 +88,8 @@ $string['searchmysets'] = 'Fetch My Sets';
 $string['searchtext'] = 'Search Terms';
 
 $string['selectset'] = 'Search for Quizlet Sets';
+$string['usethisset'] = 'Use this Set';
+$string['previewbelow'] = 'Preview Below';
 $string['quizletsetid'] = 'Quizlet Set ID';
 $string['quizletsettitle'] = 'Quizlet Set Title';
 $string['quizletimport:addinstance'] = 'Add a new Quizlet Import activity';
