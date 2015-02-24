@@ -27,15 +27,15 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['modulename'] = 'Quizlet Import';
-$string['modulenameplural'] = 'Quizlet Imports';
-$string['modulename_help'] = 'Use the Quizlet Import module for... | The quizletimport module allows...';
+$string['modulename'] = 'Quizlet Activity';
+$string['modulenameplural'] = 'Quizlet Activities';
+$string['modulename_help'] = 'Use the Quizlet module for... | The quizletimport module allows...';
 $string['quizletimportfieldset'] = 'Fieldset';
 $string['quizletimportname'] = 'Quizlet Activity name';
-$string['quizletimportname_help'] = 'This is the content of the help tooltip associated with the Quizlet Import name field. Markdown syntax is supported.';
-$string['quizletimport'] = 'Quizlet Import';
-$string['pluginadministration'] = 'Quizlet Import Module Administration';
-$string['pluginname'] = 'Quizlet Import';
+$string['quizletimportname_help'] = 'This is the content of the help tooltip associated with the Quizlet activity. Markdown syntax is supported.';
+$string['quizletimport'] = 'Quizlet Activity';
+$string['pluginadministration'] = 'Quizlet Activity Administration';
+$string['pluginname'] = 'Quizlet Activity';
 
 $string['displayoptions'] = 'qi display options';
 $string['configdisplayoptions'] = 'qi cfg display options';

@@ -27,15 +27,15 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['modulename'] = 'Quizletインポート';
-$string['modulenameplural'] = 'Quizletインポート';
-$string['modulename_help'] = 'Quizletインポートモジュールをの使い方 | Quizletインポートモジュールを使うと、QuizletサイトからQuizletのセットをインポートできます。';
+$string['modulename'] = 'Quizlet';
+$string['modulenameplural'] = 'Quizlet';
+$string['modulename_help'] = 'Quizletモジュールをの使い方 | Quizletモジュールを使うと、QuizletサイトからQuizletのセットをインポートできます。';
 $string['quizletimportfieldset'] = 'Fieldset';
-$string['quizletimportname'] = 'Quizletインポートモジュール名';
+$string['quizletimportname'] = 'Quizletモジュール';
 $string['quizletimportname_help'] = 'コースページ上でのリンク文字列を指定します。';
 $string['quizletimport'] = 'Quizletインポート';
-$string['pluginadministration'] = 'Quizletインポートモジュールの管理';
-$string['pluginname'] = 'Quizletインポート';
+$string['pluginadministration'] = 'Quizletモジュールの管理';
+$string['pluginname'] = 'Quizlet';
 
 $string['displayoptions'] = 'qi 表示オプション';
 $string['configdisplayoptions'] = 'qi 表示オプションの設定';
