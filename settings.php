@@ -32,13 +32,6 @@ if ($ADMIN->fulltree) {
     $displayoptions = resourcelib_get_displayoptions(array(RESOURCELIB_DISPLAY_OPEN, RESOURCELIB_DISPLAY_POPUP));
     $defaultdisplayoptions = array(RESOURCELIB_DISPLAY_OPEN);
 
-    //--- general settings -----------------------------------------------------------------------------------
-    $settings->add(new admin_setting_configcheckbox('quizletimport/requiremodintro',
-        get_string('requiremodintro', 'admin'), get_string('configrequiremodintro', 'admin'), 1));
-
-
-    //--- modedit defaults -----------------------------------------------------------------------------------
-
 	  $settings->add(new admin_setting_configtext('quizletimport/apikey',
         get_string('apikey', 'quizletimport'), get_string('apikeyexplain', 'quizletimport'), 'YOUR API KEY', PARAM_TEXT));
 		
