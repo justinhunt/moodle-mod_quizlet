@@ -35,4 +35,4 @@ $plugin->requires  = 2010031900;      // Requires this Moodle version
 $plugin->cron      = 0;               // Period for cron to check this module (secs)
 $plugin->component = 'mod_quizletimport'; // To check on upgrade, that module sits in correct place
 $plugin->maturity  = MATURITY_STABLE;
-$module->release   = '1.0.1 (Build 2014101001)';
+$plugin->release   = '1.0.1 (Build 2014101001)';
