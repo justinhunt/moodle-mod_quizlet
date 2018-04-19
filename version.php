@@ -17,22 +17,22 @@
 
 
 /**
- * Defines the version of quizletimport
+ * Defines the version of quizlet
  *
  * This code fragment is called by moodle_needs_upgrading() and
  * /admin/index.php
  *
- * @package    mod_quizletimport
+ * @package    mod_quizlet
  * @copyright  2014 Justin Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2014101001;      // If version == 0 then module will not be installed
+$plugin->version   = 2018041000;      // If version == 0 then module will not be installed
 //$plugin->version   = 2010032200;    // The current module version (Date: YYYYMMDDXX)
 $plugin->requires  = 2010031900;      // Requires this Moodle version
 $plugin->cron      = 0;               // Period for cron to check this module (secs)
-$plugin->component = 'mod_quizletimport'; // To check on upgrade, that module sits in correct place
+$plugin->component = 'mod_quizlet'; // To check on upgrade, that module sits in correct place
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = '1.0.1 (Build 2014101001)';
+$plugin->release = '1.1.0 (Build 2018041000)';

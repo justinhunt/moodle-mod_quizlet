@@ -16,15 +16,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Library of interface functions and constants for module quizletimport
+ * Library of interface functions and constants for module quizlet
  *
  * All the core Moodle functions, neeeded to allow the module to work
  * integrated in Moodle should be placed here.
- * All the quizletimport specific functions, needed to implement all the module
+ * All the quizlet specific functions, needed to implement all the module
  * logic, should go to locallib.php. This will help to save some memory when
  * Moodle is performing actions across all modules.
  *
- * @package    mod_quizletimport
+ * @package    mod_quizlet
  * @copyright  2011 Justin Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -45,7 +45,7 @@ defined('MOODLE_INTERNAL') || die();
  * @param string $feature FEATURE_xx constant for requested feature
  * @return mixed true if the feature is supported, null if unknown
  */
-function quizletimport_supports($feature) {
+function quizlet_supports($feature) {
     switch($feature) {
         case FEATURE_MOD_INTRO:         return true;
         case FEATURE_SHOW_DESCRIPTION:  return true;
@@ -56,40 +56,40 @@ function quizletimport_supports($feature) {
 }
 
 /**
- * Saves a new instance of the quizletimport into the database
+ * Saves a new instance of the quizlet into the database
  *
  * Given an object containing all the necessary data,
  * (defined by the form in mod_form.php) this function
  * will create a new instance and return the id number
  * of the new instance.
  *
- * @param object $quizletimport An object from the form in mod_form.php
- * @param mod_quizletimport_mod_form $mform
- * @return int The id of the newly inserted quizletimport record
+ * @param object $quizlet An object from the form in mod_form.php
+ * @param mod_quizlet_mod_form $mform
+ * @return int The id of the newly inserted quizlet record
  */
-function quizletimport_add_instance(stdClass $quizletimport, mod_quizletimport_mod_form $mform = null) {
+function quizlet_add_instance(stdClass $quizlet, mod_quizlet_mod_form $mform = null) {
     global $DB;
 
-    $quizletimport->timecreated = time();
+    $quizlet->timecreated = time();
 
     # You may have to add extra stuff in here #
 
-    return $DB->insert_record('quizletimport', $quizletimport);
+    return $DB->insert_record('quizlet', $quizlet);
 }
 
 /**
  * Register the ability to handle drag and drop file uploads
  * @return array containing details of the files / types the mod can handle
  */
-function quizletimport_dndupload_register() {
+function quizlet_dndupload_register() {
     /*
     return array('files' => array(
-                     array('extension' => 'qlt', 'message' => get_string('createquizletimport', 'page'))
+                     array('extension' => 'qlt', 'message' => get_string('createquizlet', 'page'))
                  ));
      *
      */
     return array('types' => array(
-                 array('identifier' => 'text', 'message' => get_string('createquizletimport', 'quizletimport'))
+                 array('identifier' => 'text', 'message' => get_string('createquizlet', 'quizlet'))
              ));
 }
 
@@ -98,15 +98,15 @@ function quizletimport_dndupload_register() {
  * @param object $uploadinfo details of the file / content that has been uploaded
  * @return int instance id of the newly created mod
  */
-function quizletimport_dndupload_handle($uploadinfo) {
+function quizlet_dndupload_handle($uploadinfo) {
 global $CFG;
 //require oauthlib for quizlet
-require_once($CFG->dirroot.'/mod/quizletimport/quizlet.php');
+require_once($CFG->dirroot.'/mod/quizlet/quizlet.php');
 
     // Gather the required info.
 	 //get params from passed in DND content and create data object
     $stringcontent = clean_param($uploadinfo->content, PARAM_TEXT);
-    $data = quizletimport_parse_instancestring($stringcontent);
+    $data = quizlet_parse_instancestring($stringcontent);
     
 	//add data dnd provides about course section/naming etc
 	$data->course = $uploadinfo->course->id;
@@ -116,20 +116,20 @@ require_once($CFG->dirroot.'/mod/quizletimport/quizlet.php');
     $data->coursemodule = $uploadinfo->coursemodule;
     
 	//store in DB
-	return quizletimport_add_instance($data, null);
+	return quizlet_add_instance($data, null);
 }
 
 /**
- * Convenience function to parse a csv string to a data object for quizletimportcreation
+ * Convenience function to parse a csv string to a data object for quizletcreation
  * called from dndupload and from quizlet block
  *
  * @param string $stringdata csv list of properties, as passed in dnd file
- * @return object data object containing most of details to make a quizletimport instance 
+ * @return object data object containing most of details to make a quizlet instance
  */
-function quizletimport_parse_instancestring($stringdata){
+function quizlet_parse_instancestring($stringdata){
 	global $CFG;
 //require oauthlib for quizlet
-require_once($CFG->dirroot.'/mod/quizletimport/quizlet.php');
+require_once($CFG->dirroot.'/mod/quizlet/quizlet.php');
 
 	$data = new stdClass();
     $temparray = explode(',', $stringdata);
@@ -159,29 +159,29 @@ require_once($CFG->dirroot.'/mod/quizletimport/quizlet.php');
 } 
 
 /**
- * Updates an instance of the quizletimport in the database
+ * Updates an instance of the quizlet in the database
  *
  * Given an object containing all the necessary data,
  * (defined by the form in mod_form.php) this function
  * will update an existing instance with new data.
  *
- * @param object $quizletimport An object from the form in mod_form.php
- * @param mod_quizletimport_mod_form $mform
+ * @param object $quizlet An object from the form in mod_form.php
+ * @param mod_quizlet_mod_form $mform
  * @return boolean Success/Fail
  */
-function quizletimport_update_instance(stdClass $quizletimport, mod_quizletimport_mod_form $mform = null) {
+function quizlet_update_instance(stdClass $quizlet, mod_quizlet_mod_form $mform = null) {
     global $DB;
 
-    $quizletimport->timemodified = time();
-    $quizletimport->id = $quizletimport->instance;
+    $quizlet->timemodified = time();
+    $quizlet->id = $quizlet->instance;
 
     # You may have to add extra stuff in here #
 
-    return $DB->update_record('quizletimport', $quizletimport);
+    return $DB->update_record('quizlet', $quizlet);
 }
 
 /**
- * Removes an instance of the quizletimport from the database
+ * Removes an instance of the quizlet from the database
  *
  * Given an ID of an instance of this module,
  * this function will permanently delete the instance
@@ -190,16 +190,16 @@ function quizletimport_update_instance(stdClass $quizletimport, mod_quizletimpor
  * @param int $id Id of the module instance
  * @return boolean Success/Failure
  */
-function quizletimport_delete_instance($id) {
+function quizlet_delete_instance($id) {
     global $DB;
 
-    if (! $quizletimport = $DB->get_record('quizletimport', array('id' => $id))) {
+    if (! $quizlet = $DB->get_record('quizlet', array('id' => $id))) {
         return false;
     }
 
     # Delete any dependent records here #
 
-    $DB->delete_records('quizletimport', array('id' => $quizletimport->id));
+    $DB->delete_records('quizlet', array('id' => $quizlet->id));
 
     return true;
 }
@@ -213,7 +213,7 @@ function quizletimport_delete_instance($id) {
  *
  * @return stdClass|null
  */
-function quizletimport_user_outline($course, $user, $mod, $quizletimport) {
+function quizlet_user_outline($course, $user, $mod, $quizlet) {
 
     $return = new stdClass();
     $return->time = 0;
@@ -228,20 +228,20 @@ function quizletimport_user_outline($course, $user, $mod, $quizletimport) {
  * @param stdClass $course the current course record
  * @param stdClass $user the record of the user we are generating report for
  * @param cm_info $mod course module info
- * @param stdClass $quizletimport the module instance record
+ * @param stdClass $quizlet the module instance record
  * @return void, is supposed to echp directly
  */
-function quizletimport_user_complete($course, $user, $mod, $quizletimport) {
+function quizlet_user_complete($course, $user, $mod, $quizlet) {
 }
 
 /**
  * Given a course and a time, this module should find recent activity
- * that has occurred in quizletimport activities and print it out.
+ * that has occurred in quizlet activities and print it out.
  * Return true if there was output, or false is there was none.
  *
  * @return boolean
  */
-function quizletimport_print_recent_activity($course, $viewfullnames, $timestart) {
+function quizlet_print_recent_activity($course, $viewfullnames, $timestart) {
     return false;  //  True if anything was printed, otherwise false
 }
 
@@ -250,7 +250,7 @@ function quizletimport_print_recent_activity($course, $viewfullnames, $timestart
  *
  * This callback function is supposed to populate the passed array with
  * custom activity records. These records are then rendered into HTML via
- * {@link quizletimport_print_recent_mod_activity()}.
+ * {@link quizlet_print_recent_mod_activity()}.
  *
  * @param array $activities sequentially indexed array of objects with the 'cmid' property
  * @param int $index the index in the $activities to use for the next record
@@ -261,15 +261,15 @@ function quizletimport_print_recent_activity($course, $viewfullnames, $timestart
  * @param int $groupid check for a particular group's activity only, defaults to 0 (all groups)
  * @return void adds items into $activities and increases $index
  */
-function quizletimport_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid, $userid=0, $groupid=0) {
+function quizlet_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid, $userid=0, $groupid=0) {
 }
 
 /**
- * Prints single activity item prepared by {@see quizletimport_get_recent_mod_activity()}
+ * Prints single activity item prepared by {@see quizlet_get_recent_mod_activity()}
 
  * @return void
  */
-function quizletimport_print_recent_mod_activity($activity, $courseid, $detail, $modnames, $viewfullnames) {
+function quizlet_print_recent_mod_activity($activity, $courseid, $detail, $modnames, $viewfullnames) {
 }
 
 /**
@@ -280,7 +280,7 @@ function quizletimport_print_recent_mod_activity($activity, $courseid, $detail, 
  * @return boolean
  * @todo Finish documenting this function
  **/
-function quizletimport_cron () {
+function quizlet_cron () {
     return true;
 }
 
@@ -290,7 +290,7 @@ function quizletimport_cron () {
  * @example return array('moodle/site:accessallgroups');
  * @return array
  */
-function quizletimport_get_extra_capabilities() {
+function quizlet_get_extra_capabilities() {
     return array();
 }
 
@@ -299,21 +299,21 @@ function quizletimport_get_extra_capabilities() {
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Is a given scale used by the instance of quizletimport?
+ * Is a given scale used by the instance of quizlet?
  *
- * This function returns if a scale is being used by one quizletimport
+ * This function returns if a scale is being used by one quizlet
  * if it has support for grading and scales. Commented code should be
  * modified if necessary. See forum, glossary or journal modules
  * as reference.
  *
- * @param int $quizletimportid ID of an instance of this module
- * @return bool true if the scale is used by the given quizletimport instance
+ * @param int $quizletid ID of an instance of this module
+ * @return bool true if the scale is used by the given quizlet instance
  */
-function quizletimport_scale_used($quizletimportid, $scaleid) {
+function quizlet_scale_used($quizletid, $scaleid) {
     global $DB;
 
     /** @example */
-    if ($scaleid and $DB->record_exists('quizletimport', array('id' => $quizletimportid, 'grade' => -$scaleid))) {
+    if ($scaleid and $DB->record_exists('quizlet', array('id' => $quizletid, 'grade' => -$scaleid))) {
         return true;
     } else {
         return false;
@@ -321,18 +321,18 @@ function quizletimport_scale_used($quizletimportid, $scaleid) {
 }
 
 /**
- * Checks if scale is being used by any instance of quizletimport.
+ * Checks if scale is being used by any instance of quizlet.
  *
  * This is used to find out if scale used anywhere.
  *
  * @param $scaleid int
- * @return boolean true if the scale is used by any quizletimport instance
+ * @return boolean true if the scale is used by any quizlet instance
  */
-function quizletimport_scale_used_anywhere($scaleid) {
+function quizlet_scale_used_anywhere($scaleid) {
     global $DB;
 
     /** @example */
-    if ($scaleid and $DB->record_exists('quizletimport', array('grade' => -$scaleid))) {
+    if ($scaleid and $DB->record_exists('quizlet', array('grade' => -$scaleid))) {
         return true;
     } else {
         return false;
@@ -340,45 +340,45 @@ function quizletimport_scale_used_anywhere($scaleid) {
 }
 
 /**
- * Creates or updates grade item for the give quizletimport instance
+ * Creates or updates grade item for the give quizlet instance
  *
  * Needed by grade_update_mod_grades() in lib/gradelib.php
  *
- * @param stdClass $quizletimport instance object with extra cmidnumber and modname property
+ * @param stdClass $quizlet instance object with extra cmidnumber and modname property
  * @param mixed optional array/object of grade(s); 'reset' means reset grades in gradebook
  * @return void
  */
-function quizletimport_grade_item_update(stdClass $quizletimport, $grades=null) {
+function quizlet_grade_item_update(stdClass $quizlet, $grades=null) {
     global $CFG;
     require_once($CFG->libdir.'/gradelib.php');
 
     /** @example */
     $item = array();
-    $item['itemname'] = clean_param($quizletimport->name, PARAM_NOTAGS);
+    $item['itemname'] = clean_param($quizlet->name, PARAM_NOTAGS);
     $item['gradetype'] = GRADE_TYPE_VALUE;
-    $item['grademax']  = $quizletimport->grade;
+    $item['grademax']  = $quizlet->grade;
     $item['grademin']  = 0;
 
-    grade_update('mod/quizletimport', $quizletimport->course, 'mod', 'quizletimport', $quizletimport->id, 0, null, $item);
+    grade_update('mod/quizlet', $quizlet->course, 'mod', 'quizlet', $quizlet->id, 0, null, $item);
 }
 
 /**
- * Update quizletimport grades in the gradebook
+ * Update quizlet grades in the gradebook
  *
  * Needed by grade_update_mod_grades() in lib/gradelib.php
  *
- * @param stdClass $quizletimport instance object with extra cmidnumber and modname property
+ * @param stdClass $quizlet instance object with extra cmidnumber and modname property
  * @param int $userid update grade of specific user only, 0 means all participants
  * @return void
  */
-function quizletimport_update_grades(stdClass $quizletimport, $userid = 0) {
+function quizlet_update_grades(stdClass $quizlet, $userid = 0) {
     global $CFG, $DB;
     require_once($CFG->libdir.'/gradelib.php');
 
     /** @example */
     $grades = array(); // populate array of grade objects indexed by userid
 
-    grade_update('mod/quizletimport', $quizletimport->course, 'mod', 'quizletimport', $quizletimport->id, 0, $grades);
+    grade_update('mod/quizlet', $quizlet->course, 'mod', 'quizlet', $quizlet->id, 0, $grades);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -396,14 +396,14 @@ function quizletimport_update_grades(stdClass $quizletimport, $userid = 0) {
  * @param stdClass $context
  * @return array of [(string)filearea] => (string)description
  */
-function quizletimport_get_file_areas($course, $cm, $context) {
+function quizlet_get_file_areas($course, $cm, $context) {
     return array();
 }
 
 /**
- * File browsing support for quizletimport file areas
+ * File browsing support for quizlet file areas
  *
- * @package mod_quizletimport
+ * @package mod_quizlet
  * @category files
  *
  * @param file_browser $browser
@@ -417,25 +417,25 @@ function quizletimport_get_file_areas($course, $cm, $context) {
  * @param string $filename
  * @return file_info instance or null if not found
  */
-function quizletimport_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
+function quizlet_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
     return null;
 }
 
 /**
- * Serves the files from the quizletimport file areas
+ * Serves the files from the quizlet file areas
  *
- * @package mod_quizletimport
+ * @package mod_quizlet
  * @category files
  *
  * @param stdClass $course the course object
  * @param stdClass $cm the course module object
- * @param stdClass $context the quizletimport's context
+ * @param stdClass $context the quizlet's context
  * @param string $filearea the name of the file area
  * @param array $args extra arguments (itemid, path)
  * @param bool $forcedownload whether or not force download
  * @param array $options additional options affecting the file serving
  */
-function quizletimport_pluginfile($course, $cm, $context, $filearea, array $args, $forcedownload, array $options=array()) {
+function quizlet_pluginfile($course, $cm, $context, $filearea, array $args, $forcedownload, array $options=array()) {
     global $DB, $CFG;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
@@ -452,26 +452,26 @@ function quizletimport_pluginfile($course, $cm, $context, $filearea, array $args
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Extends the global navigation tree by adding quizletimport nodes if there is a relevant content
+ * Extends the global navigation tree by adding quizlet nodes if there is a relevant content
  *
  * This can be called by an AJAX request so do not rely on $PAGE as it might not be set up properly.
  *
- * @param navigation_node $navref An object representing the navigation tree node of the quizletimport module instance
+ * @param navigation_node $navref An object representing the navigation tree node of the quizlet module instance
  * @param stdClass $course
  * @param stdClass $module
  * @param cm_info $cm
  */
-function quizletimport_extend_navigation(navigation_node $navref, stdclass $course, stdclass $module, cm_info $cm) {
+function quizlet_extend_navigation(navigation_node $navref, stdclass $course, stdclass $module, cm_info $cm) {
 }
 
 /**
- * Extends the settings navigation with the quizletimport settings
+ * Extends the settings navigation with the quizlet settings
  *
- * This function is called when the context for the page is a quizletimport module. This is not called by AJAX
+ * This function is called when the context for the page is a quizlet module. This is not called by AJAX
  * so it is safe to rely on the $PAGE.
  *
  * @param settings_navigation $settingsnav {@link settings_navigation}
- * @param navigation_node $quizletimportnode {@link navigation_node}
+ * @param navigation_node $quizletnode {@link navigation_node}
  */
-function quizletimport_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $quizletimportnode=null) {
+function quizlet_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $quizletnode=null) {
 }

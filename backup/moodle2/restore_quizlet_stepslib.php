@@ -23,38 +23,38 @@
  */
 
 /**
- * Define all the restore steps that will be used by the restore_quizletimport_activity_task
+ * Define all the restore steps that will be used by the restore_quizlet_activity_task
  */
 
 /**
- * Structure step to restore one quizletimport activity
+ * Structure step to restore one quizlet activity
  */
-class restore_quizletimport_activity_structure_step extends restore_activity_structure_step {
+class restore_quizlet_activity_structure_step extends restore_activity_structure_step {
 
     protected function define_structure() {
 
         $paths = array();
-        $paths[] = new restore_path_element('quizletimport', '/activity/quizletimport');
+        $paths[] = new restore_path_element('quizlet', '/activity/quizlet');
 
         // Return the paths wrapped into standard activity structure
         return $this->prepare_activity_structure($paths);
     }
 
-    protected function process_quizletimport($data) {
+    protected function process_quizlet($data) {
         global $DB;
 
         $data = (object)$data;
         $oldid = $data->id;
         $data->course = $this->get_courseid();
 
-        // insert the quizletimport record
-        $newitemid = $DB->insert_record('quizletimport', $data);
+        // insert the quizlet record
+        $newitemid = $DB->insert_record('quizlet', $data);
         // immediately after inserting "activity" record, call this
         $this->apply_activity_instance($newitemid);
     }
 
     protected function after_execute() {
-        // Add quizletimport related files, no need to match by itemname (just internally handled context)
-        $this->add_related_files('mod_quizletimport', 'intro', null);
+        // Add quizlet related files, no need to match by itemname (just internally handled context)
+        $this->add_related_files('mod_quizlet', 'intro', null);
     }
 }

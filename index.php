@@ -21,12 +21,12 @@
  * You can have a rather longer description of the file as well,
  * if you like, and it can span multiple lines.
  *
- * @package    mod_quizletimport
+ * @package    mod_quizlet
  * @copyright  2011 Your Name
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/// Replace quizletimport with the name of your module and remove this line
+/// Replace quizlet with the name of your module and remove this line
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
@@ -37,19 +37,19 @@ $course = $DB->get_record('course', array('id' => $id), '*', MUST_EXIST);
 
 require_course_login($course);
 
-add_to_log($course->id, 'quizletimport', 'view all', 'index.php?id='.$course->id, '');
+add_to_log($course->id, 'quizlet', 'view all', 'index.php?id='.$course->id, '');
 
 $coursecontext = context_course::instance($course->id);
 
-$PAGE->set_url('/mod/quizletimport/index.php', array('id' => $id));
+$PAGE->set_url('/mod/quizlet/index.php', array('id' => $id));
 $PAGE->set_title(format_string($course->fullname));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($coursecontext);
 
 echo $OUTPUT->header();
 
-if (! $quizletimports = get_all_instances_in_course('quizletimport', $course)) {
-    notice(get_string('noquizletimports', 'quizletimport'), new moodle_url('/course/view.php', array('id' => $course->id)));
+if (! $quizlets = get_all_instances_in_course('quizlet', $course)) {
+    notice(get_string('noquizlets', 'quizlet'), new moodle_url('/course/view.php', array('id' => $course->id)));
 }
 
 $table = new html_table();
@@ -64,25 +64,25 @@ if ($course->format == 'weeks') {
     $table->align = array('left', 'left', 'left');
 }
 
-foreach ($quizletimports as $quizletimport) {
-    if (!$quizletimport->visible) {
+foreach ($quizlets as $quizlet) {
+    if (!$quizlet->visible) {
         $link = html_writer::link(
-            new moodle_url('/mod/quizletimport.php', array('id' => $quizletimport->coursemodule)),
-            format_string($quizletimport->name, true),
+            new moodle_url('/mod/quizlet.php', array('id' => $quizlet->coursemodule)),
+            format_string($quizlet->name, true),
             array('class' => 'dimmed'));
     } else {
         $link = html_writer::link(
-            new moodle_url('/mod/quizletimport.php', array('id' => $quizletimport->coursemodule)),
-            format_string($quizletimport->name, true));
+            new moodle_url('/mod/quizlet.php', array('id' => $quizlet->coursemodule)),
+            format_string($quizlet->name, true));
     }
 
     if ($course->format == 'weeks' or $course->format == 'topics') {
-        $table->data[] = array($quizletimport->section, $link);
+        $table->data[] = array($quizlet->section, $link);
     } else {
         $table->data[] = array($link);
     }
 }
 
-echo $OUTPUT->heading(get_string('modulenameplural', 'quizletimport'), 2);
+echo $OUTPUT->heading(get_string('modulenameplural', 'quizlet'), 2);
 echo html_writer::table($table);
 echo $OUTPUT->footer();

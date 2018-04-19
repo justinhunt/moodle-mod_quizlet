@@ -17,7 +17,7 @@
 
 /**
  * @package    mod
- * @subpackage quizletimport
+ * @subpackage quizlet
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -25,13 +25,13 @@
 defined('MOODLE_INTERNAL') || die;
 
 /**
- * Define all the backup steps that will be used by the backup_quizletimport_activity_task
+ * Define all the backup steps that will be used by the backup_quizlet_activity_task
  */
 
 /**
- * Define the complete quizletimport structure for backup, with file and id annotations
+ * Define the complete quizlet structure for backup, with file and id annotations
  */
-class backup_quizletimport_activity_structure_step extends backup_activity_structure_step {
+class backup_quizlet_activity_structure_step extends backup_activity_structure_step {
 
     protected function define_structure() {
 
@@ -39,7 +39,7 @@ class backup_quizletimport_activity_structure_step extends backup_activity_struc
         $userinfo = $this->get_setting_value('userinfo');
 
         // Define each element separated
-        $quizletimport = new backup_nested_element('quizletimport', array('id'), array(
+        $quizlet = new backup_nested_element('quizlet', array('id'), array(
             'name','activitytype','quizletset','mintime','showcountdown','showcompletion', 
             'intro', 'introformat', 'timecreated', 'timemodified'));
 
@@ -47,15 +47,15 @@ class backup_quizletimport_activity_structure_step extends backup_activity_struc
         // (love this)
 
         // Define sources
-        $quizletimport->set_source_table('quizletimport', array('id' => backup::VAR_ACTIVITYID));
+        $quizlet->set_source_table('quizlet', array('id' => backup::VAR_ACTIVITYID));
 
         // Define id annotations
         // (none)
 
         // Define file annotations
-        $quizletimport->annotate_files('mod_quizletimport', 'intro', null); // This file areas haven't itemid
+        $quizlet->annotate_files('mod_quizlet', 'intro', null); // This file areas haven't itemid
 
-        // Return the root element (quizletimport), wrapped into standard activity structure
-        return $this->prepare_activity_structure($quizletimport);
+        // Return the root element (quizlet), wrapped into standard activity structure
+        return $this->prepare_activity_structure($quizlet);
     }
 }

@@ -17,10 +17,10 @@
 
 
 /**
- * English strings for quizletimport
+ * English strings for quizlet
  *
  *
- * @package    mod_quizletimport
+ * @package    mod_quizlet
  * @copyright  2014 Justin Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,10 +30,10 @@ defined('MOODLE_INTERNAL') || die();
 $string['modulename'] = 'Quizlet';
 $string['modulenameplural'] = 'Quizlet';
 $string['modulename_help'] = 'Quizletモジュールをの使い方 | Quizletモジュールを使うと、QuizletサイトからQuizletのセットをインポートできます。';
-$string['quizletimportfieldset'] = 'Fieldset';
-$string['quizletimportname'] = 'Quizletモジュール';
-$string['quizletimportname_help'] = 'コースページ上でのリンク文字列を指定します。';
-$string['quizletimport'] = 'Quizletインポート';
+$string['quizletfieldset'] = 'Fieldset';
+$string['quizletname'] = 'Quizletモジュール';
+$string['quizletname_help'] = 'コースページ上でのリンク文字列を指定します。';
+$string['quizlet'] = 'Quizletインポート';
 $string['pluginadministration'] = 'Quizletモジュールの管理';
 $string['pluginname'] = 'Quizlet';
 
@@ -69,7 +69,7 @@ $string['completed'] = '活動完了';
 $string['timeleft'] = '残り時間:';
 $string['showcountdown'] = '完了までのカウントダウンを表示する';
 $string['showcompletion'] = '終了時に完了ラベルを表示する';
-$string['createquizletimport'] = 'Quizlet活動を作成する';
+$string['createquizlet'] = 'Quizlet活動を作成する';
 $string['quizletsetinput'] = 'QuizletセットID';
 $string['exportentriestoxml'] = 'Quizletセットを小テスト（XML形式）に出力する';
 $string['exportfile'] = 'Quizletセットを小テスト（Moodleインポート形式）に出力する';
@@ -94,8 +94,8 @@ $string['previewbelow'] = 'プレビュー';
 
 $string['quizletsetid'] = 'QuizletセットのID番号';
 $string['quizletsettitle'] = 'Quizletセットのタイトル';
-$string['quizletimport:addinstance'] = '新しいQuizletインポート活動を追加する';
-$string['quizletimport:view'] = 'インポート活動を表示する';
-$string['quizletimport:submit'] = 'Quizletインポート活動を追加できる';
+$string['quizlet:addinstance'] = '新しいQuizletインポート活動を追加する';
+$string['quizlet:view'] = 'インポート活動を表示する';
+$string['quizlet:submit'] = 'Quizletインポート活動を追加できる';
 
 

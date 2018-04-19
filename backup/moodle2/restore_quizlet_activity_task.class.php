@@ -24,13 +24,13 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/mod/quizletimport/backup/moodle2/restore_quizletimport_stepslib.php'); // Because it exists (must)
+require_once($CFG->dirroot . '/mod/quizlet/backup/moodle2/restore_quizlet_stepslib.php'); // Because it exists (must)
 
 /**
- * quizletimport restore task that provides all the settings and steps to perform one
+ * quizlet restore task that provides all the settings and steps to perform one
  * complete restore of the activity
  */
-class restore_quizletimport_activity_task extends restore_activity_task {
+class restore_quizlet_activity_task extends restore_activity_task {
 
     /**
      * Define (add) particular settings this activity can have
@@ -44,7 +44,7 @@ class restore_quizletimport_activity_task extends restore_activity_task {
      */
     protected function define_my_steps() {
         // label only has one structure step
-        $this->add_step(new restore_quizletimport_activity_structure_step('quizletimport_structure', 'quizletimport.xml'));
+        $this->add_step(new restore_quizlet_activity_structure_step('quizlet_structure', 'quizlet.xml'));
     }
 
     /**
@@ -54,7 +54,7 @@ class restore_quizletimport_activity_task extends restore_activity_task {
     static public function define_decode_contents() {
         $contents = array();
 
-        $contents[] = new restore_decode_content('quizletimport', array('intro'), 'quizletimport');
+        $contents[] = new restore_decode_content('quizlet', array('intro'), 'quizlet');
 
         return $contents;
     }
@@ -66,8 +66,8 @@ class restore_quizletimport_activity_task extends restore_activity_task {
     static public function define_decode_rules() {
         $rules = array();
 
-        $rules[] = new restore_decode_rule('QUIZLETIMPORTVIEWBYID', '/mod/quizletimport/view.php?id=$1', 'course_module');
-        $rules[] = new restore_decode_rule('QUIZLETIMPORTINDEX', '/mod/quizletimport/index.php?id=$1', 'course');
+        $rules[] = new restore_decode_rule('QUIZLETVIEWBYID', '/mod/quizlet/view.php?id=$1', 'course_module');
+        $rules[] = new restore_decode_rule('QUIZLETINDEX', '/mod/quizlet/index.php?id=$1', 'course');
 
         return $rules;
 
@@ -76,15 +76,15 @@ class restore_quizletimport_activity_task extends restore_activity_task {
     /**
      * Define the restore log rules that will be applied
      * by the {@link restore_logs_processor} when restoring
-     * quizletimport logs. It must return one array
+     * quizlet logs. It must return one array
      * of {@link restore_log_rule} objects
      */
     static public function define_restore_log_rules() {
         $rules = array();
 
-        $rules[] = new restore_log_rule('quizletimport', 'add', 'view.php?id={course_module}', '{quizletimport}');
-        $rules[] = new restore_log_rule('quizletimport', 'update', 'view.php?id={course_module}', '{quizletimport}');
-        $rules[] = new restore_log_rule('quizletimport', 'view', 'view.php?id={course_module}', '{quizletimport}');
+        $rules[] = new restore_log_rule('quizlet', 'add', 'view.php?id={course_module}', '{quizlet}');
+        $rules[] = new restore_log_rule('quizlet', 'update', 'view.php?id={course_module}', '{quizlet}');
+        $rules[] = new restore_log_rule('quizlet', 'view', 'view.php?id={course_module}', '{quizlet}');
 
         return $rules;
     }
@@ -102,7 +102,7 @@ class restore_quizletimport_activity_task extends restore_activity_task {
     static public function define_restore_log_rules_for_course() {
         $rules = array();
 
-        $rules[] = new restore_log_rule('quizletimport', 'view all', 'index.php?id={course}', null);
+        $rules[] = new restore_log_rule('quizlet', 'view all', 'index.php?id={course}', null);
 
         return $rules;
     }

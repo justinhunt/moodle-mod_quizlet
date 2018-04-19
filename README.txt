@@ -4,15 +4,15 @@ How to install on a moodle 2.x site.
 -------------------------------------------
 Method One
 1.- Visit your Moodle site's "site administration -> plugins -> install plugins" page, 
-2.- Choose "Activity Module(mod)" and drag the quizletimport.zip folder into the "ZIP Package" area.
+2.- Choose "Activity Module(mod)" and drag the quizlet.zip folder into the "ZIP Package" area.
 3.- Follow the on screen instructions to complete the installation 
 NB If the "mod" folder does not have the correct permissions you will see a warning message
 and will need to change the permissions, or use Method Two
 
 Method Two
-1.- Unzip the quizletimport.zip archive to your local computer.
-2.- This should give you a folder named "quizletimport".
-3.- Upload the "quizletimport" folder to your [moodle site]/mod folder using FTP or CPanel.
+1.- Unzip the quizlet.zip archive to your local computer.
+2.- This should give you a folder named "quizlet".
+3.- Upload the "quizlet" folder to your [moodle site]/mod folder using FTP or CPanel.
 4.- Visit your Admin/Notifications page so that the module gets installed. 
 
 For both methods, at the end of the installation process, the plugin configuration settings will be displayed.

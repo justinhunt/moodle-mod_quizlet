@@ -22,7 +22,7 @@
  * It is not really essential to know about it, but these logs were created as example
  * in the previous 1.9 NEWMODULE.
  *
- * @package    mod_quizletimport
+ * @package    mod_quizlet
  * @copyright  2011 Your Name <your@email.adress>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -32,8 +32,8 @@ defined('MOODLE_INTERNAL') || die();
 global $DB;
 
 $logs = array(
-    array('module'=>'quizletimport', 'action'=>'add', 'mtable'=>'quizletimport', 'field'=>'name'),
-    array('module'=>'quizletimport', 'action'=>'update', 'mtable'=>'quizletimport', 'field'=>'name'),
-    array('module'=>'quizletimport', 'action'=>'view', 'mtable'=>'quizletimport', 'field'=>'name'),
-    array('module'=>'quizletimport', 'action'=>'view all', 'mtable'=>'quizletimport', 'field'=>'name')
+    array('module'=>'quizlet', 'action'=>'add', 'mtable'=>'quizlet', 'field'=>'name'),
+    array('module'=>'quizlet', 'action'=>'update', 'mtable'=>'quizlet', 'field'=>'name'),
+    array('module'=>'quizlet', 'action'=>'view', 'mtable'=>'quizlet', 'field'=>'name'),
+    array('module'=>'quizlet', 'action'=>'view all', 'mtable'=>'quizlet', 'field'=>'name')
 );

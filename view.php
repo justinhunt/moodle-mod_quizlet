@@ -16,12 +16,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Prints a particular instance of quizletimport
+ * Prints a particular instance of quizlet
  *
  * You can have a rather longer description of the file as well,
  * if you like, and it can span multiple lines.
  *
- * @package    mod_quizletimport
+ * @package    mod_quizlet
  * @copyright  2011 Your Name
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -36,17 +36,17 @@ require_once(dirname(__FILE__).'/locallib.php');
 require_once($CFG->dirroot.'/lib/completionlib.php');
 
 $id = optional_param('id', 0, PARAM_INT); // course_module ID, or
-$n  = optional_param('n', 0, PARAM_INT);  // quizletimport instance ID - it should be named as the first character of the module
+$n  = optional_param('n', 0, PARAM_INT);  // quizlet instance ID - it should be named as the first character of the module
 $oauth2code = optional_param('oauth2code', 0, PARAM_RAW); //an oauth2 code recieved from quizlet via callback at /admin/oauth2callback.php
 
 if ($id) {
-    $cm         = get_coursemodule_from_id('quizletimport', $id, 0, false, MUST_EXIST);
+    $cm         = get_coursemodule_from_id('quizlet', $id, 0, false, MUST_EXIST);
     $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-    $quizletimport  = $DB->get_record('quizletimport', array('id' => $cm->instance), '*', MUST_EXIST);
+    $quizlet  = $DB->get_record('quizlet', array('id' => $cm->instance), '*', MUST_EXIST);
 } elseif ($n) {
-    $quizletimport  = $DB->get_record('quizletimport', array('id' => $n), '*', MUST_EXIST);
-    $course     = $DB->get_record('course', array('id' => $quizletimport->course), '*', MUST_EXIST);
-    $cm         = get_coursemodule_from_instance('quizletimport', $quizletimport->id, $course->id, false, MUST_EXIST);
+    $quizlet  = $DB->get_record('quizlet', array('id' => $n), '*', MUST_EXIST);
+    $course     = $DB->get_record('course', array('id' => $quizlet->course), '*', MUST_EXIST);
+    $cm         = get_coursemodule_from_instance('quizlet', $quizlet->id, $course->id, false, MUST_EXIST);
 } else {
     error('You must specify a course_module ID or an instance ID');
 }
@@ -58,16 +58,16 @@ global $USER;
 
 //this is important cos we use this to figure out how long student was on page
 if($CFG->version<2014051200){
-	add_to_log($course->id, 'quizletimport', 'view', "view.php?id={$cm->id}", $quizletimport->name, $cm->id);
+	add_to_log($course->id, 'quizlet', 'view', "view.php?id={$cm->id}", $quizlet->name, $cm->id);
 }else{
 	// Trigger module viewed event.
-	$event = \mod_quizletimport\event\course_module_viewed::create(array(
-	   'objectid' => $quizletimport->id,
+	$event = \mod_quizlet\event\course_module_viewed::create(array(
+	   'objectid' => $quizlet->id,
 	   'context' => $context
 	));
 	$event->add_record_snapshot('course_modules', $cm);
 	$event->add_record_snapshot('course', $course);
-	$event->add_record_snapshot('quizletimport', $quizletimport);
+	$event->add_record_snapshot('quizlet', $quizlet);
 	$event->trigger();
 }
 
@@ -79,13 +79,13 @@ $viewincident->cmid = $cm->id;
 $viewincident->course = $course->id;
 $viewincident->userid = $USER->id;
 $viewincident->action = 'view';
-$DB->insert_record('quizletimport_log', $viewincident, false);
+$DB->insert_record('quizlet_log', $viewincident, false);
 
 
 
 /// Print the page header
-$PAGE->set_url('/mod/quizletimport/view.php', array('id' => $cm->id));
-$PAGE->set_title(format_string($quizletimport->name));
+$PAGE->set_url('/mod/quizlet/view.php', array('id' => $cm->id));
+$PAGE->set_title(format_string($quizlet->name));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($context);
 
@@ -93,18 +93,18 @@ $PAGE->set_context($context);
 // other things you may want to set - remove if not needed
 //$PAGE->set_cacheable(false);
 //$PAGE->set_focuscontrol('some-html-id');
-//$PAGE->add_body_class('quizletimport-'.$somevar);
+//$PAGE->add_body_class('quizlet-'.$somevar);
 
-$qih = new quizletimport_helper($quizletimport,$course,$cm);
+$qih = new quizlet_helper($quizlet,$course,$cm);
 
 //get our renderer
-$renderer = $PAGE->get_renderer('mod_quizletimport');
+$renderer = $PAGE->get_renderer('mod_quizlet');
 
 // Output starts here
 echo $renderer->header();
 
-if ($quizletimport->intro) { // Conditions to show the intro can change to look for own settings or whatever
-    echo $OUTPUT->box(format_module_intro('quizletimport', $quizletimport, $cm->id), 'generalbox mod_introbox', 'quizletimportintro');
+if ($quizlet->intro) { // Conditions to show the intro can change to look for own settings or whatever
+    echo $OUTPUT->box(format_module_intro('quizlet', $quizlet, $cm->id), 'generalbox mod_introbox', 'quizletintro');
 }
 
 /*
@@ -116,8 +116,8 @@ $data = $completion->get_data($cm, false, $USER->id);
 $completed= $data->viewed == COMPLETION_VIEWED;
 
 //set the js to the page
-$options = array($quizletimport->mintime,$cm->id, $completed);
-$PAGE->requires->js_init_call('M.mod_quizletimport.timer.init', $options, false);
+$options = array($quizlet->mintime,$cm->id, $completed);
+$PAGE->requires->js_init_call('M.mod_quizlet.timer.init', $options, false);
 */
 
 $qih->initialise_timer($PAGE);
@@ -125,7 +125,7 @@ $qih->initialise_timer($PAGE);
 // Replace the following lines with your own code
 /*
 // DO oauth2 and quizlet stuff
-$qiq  = new quizletimport_quizlet($quizletimport);
+$qiq  = new quizlet_quizlet($quizlet);
 $qmessage = false;
 if($qiq->quizlet->is_authenticated()){
 	$endpoint = '/users/@username@/sets';
@@ -153,7 +153,7 @@ if($qmessage){
 	echo $qmessage;
 }
 */
-//print_r($quizletimport);
+//print_r($quizlet);
 /*
  $args = array(
 			'api_scope' => 'read'
@@ -163,20 +163,20 @@ $qiz  = new quizlet($args);
 $qiz=$qih->quizlet;
 
 //display our quizlet activity
-$embedcode = $qiz->fetch_embed_code($quizletimport->quizletset,$quizletimport->activitytype);
+$embedcode = $qiz->fetch_embed_code($quizlet->quizletset,$quizlet->activitytype);
 echo $embedcode;
 
 //output completed tag
 $completed = $qih->fetch_completed_tag();
 echo $completed;
-//echo html_writer::tag('div',  get_string('completed', 'quizletimport'),array('id' => 'quizletimport-completed'));
+//echo html_writer::tag('div',  get_string('completed', 'quizlet'),array('id' => 'quizlet-completed'));
 
 $timer=$qih->fetch_countdown_timer();
 /*
 //output time left counter
 $timer = html_writer::tag('div', get_string('timeleft', 'quiz') . ' ' .
-            html_writer::tag('span', '', array('id' => 'quizletimport-time-left')),
-            array('id' => 'quizletimport-timer', 'role' => 'timer',
+            html_writer::tag('span', '', array('id' => 'quizlet-time-left')),
+            array('id' => 'quizlet-timer', 'role' => 'timer',
                 'aria-atomic' => 'true', 'aria-relevant' => 'text'));
 */
 echo $timer;

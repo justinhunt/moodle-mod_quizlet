@@ -16,12 +16,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The main quizletimport configuration form
+ * The main quizlet configuration form
  *
  * It uses the standard core Moodle formslib. For more info about them, please
  * visit: http://docs.moodle.org/en/Development:lib/formslib.php
  *
- * @package    mod_quizletimport
+ * @package    mod_quizlet
  * @copyright  2014 Justin Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,12 +29,12 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/course/moodleform_mod.php');
-require_once($CFG->dirroot.'/mod/quizletimport/locallib.php');
+require_once($CFG->dirroot.'/mod/quizlet/locallib.php');
 
 /**
  * Module instance settings form
  */
-class mod_quizletimport_mod_form extends moodleform_mod {
+class mod_quizlet_mod_form extends moodleform_mod {
 
     /**
      * Defines forms elements
@@ -44,8 +44,8 @@ class mod_quizletimport_mod_form extends moodleform_mod {
 
         $mform = $this->_form;
 	//get our config and renderer	
-        $config = get_config('quizletimport');
-        $renderer = $PAGE->get_renderer('mod_quizletimport');
+        $config = get_config('quizlet');
+        $renderer = $PAGE->get_renderer('mod_quizlet');
         
         //load up some JS to help us select/update quizlet sets
         //set the js to the page
@@ -53,14 +53,14 @@ class mod_quizletimport_mod_form extends moodleform_mod {
         $opts = array();
         $opts['qidbox']='id_' . 'quizletset';
         $opts['qnamebox']='id_' . 'quizletsettitle';
-        $PAGE->requires->js_init_call('M.mod_quizletimport.selectionhelper.init', array($opts), false);
+        $PAGE->requires->js_init_call('M.mod_quizlet.selectionhelper.init', array($opts), false);
         
         //-------------------------------------------------------------------------------
         // Adding the "general" fieldset, where all the common settings are showed
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         // Adding the standard "name" field
-        $mform->addElement('text', 'name', get_string('quizletimportname', 'quizletimport'), array('size'=>'64'));
+        $mform->addElement('text', 'name', get_string('quizletname', 'quizlet'), array('size'=>'64'));
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);
         } else {
@@ -68,7 +68,7 @@ class mod_quizletimport_mod_form extends moodleform_mod {
         }
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
-        $mform->addHelpButton('name', 'quizletimportname', 'quizletimport');
+        $mform->addHelpButton('name', 'quizletname', 'quizlet');
 
         // Adding the standard "intro" and "introformat" fields
         if($CFG->version < 2015051100){
@@ -113,37 +113,37 @@ class mod_quizletimport_mod_form extends moodleform_mod {
 						$options[$quizletset->id] = $quizletset->title;
 					}
 					
-					$qset = $mform->addElement('select', 'quizletset', get_string('usersets', 'quizletimport'), $options);
+					$qset = $mform->addElement('select', 'quizletset', get_string('usersets', 'quizlet'), $options);
 					$qset->setMultiple(false);
 					$mform->setType('quizletset', PARAM_TEXT);
 					
 					//also add a jumping off point for our quiz maker	
 					$cmid = optional_param('update', 0, PARAM_INT); // course_module ID		              
-         			$mform->addElement('static', 'createmquiz', get_string('createmquiz', 'quizletimport'), '<a href="' . $CFG->wwwroot . '/mod/quizletimport/export_to_quiz.php?id=' . $cmid . '">' . get_string('createmquiz', 'quizletimport') . '</a>');
+         			$mform->addElement('static', 'createmquiz', get_string('createmquiz', 'quizlet'), '<a href="' . $CFG->wwwroot . '/mod/quizlet/export_to_quiz.php?id=' . $cmid . '">' . get_string('createmquiz', 'quizlet') . '</a>');
            
 				}else{
 					$qmessage =  $mysets['error'];
 				}
 		}else{
-			 $mform->addElement('static', 'quizletauthorize', get_string('quizletloginlabel', 'quizletimport'), '<a href="' . $qiz->fetch_auth_url() . '">' . get_string('quizletlogin', 'quizletimport') . '</a>');
-                         $mform->addElement('text', 'quizletset', get_string('quizletsetinput', 'quizletimport'),array('size' => '64'));
+			 $mform->addElement('static', 'quizletauthorize', get_string('quizletloginlabel', 'quizlet'), '<a href="' . $qiz->fetch_auth_url() . '">' . get_string('quizletlogin', 'quizlet') . '</a>');
+                         $mform->addElement('text', 'quizletset', get_string('quizletsetinput', 'quizlet'),array('size' => '64'));
                          $mform->setType('quizletset', PARAM_TEXT);                
         }
         */
         
       //our jump off link to the select screen
-   //   $mform->addElement('header', 'selectsetheader', get_string('selectset', 'quizletimport'));
-      $ssurl =  new moodle_url('/mod/quizletimport/selectset.php', array('courseid'=>$COURSE->id,'caller'=>$PAGE->url));
-       //$mform->addElement('static', 'selectset', get_string('selectset', 'quizletimport'), html_writer::link($ssurl,get_string('selectset', 'quizletimport')));
-      $mform->addElement('static', 'selectset', get_string('selectset', 'quizletimport'), $renderer->show_popup_page($ssurl,get_string('selectset', 'quizletimport')));
+   //   $mform->addElement('header', 'selectsetheader', get_string('selectset', 'quizlet'));
+      $ssurl =  new moodle_url('/mod/quizlet/selectset.php', array('courseid'=>$COURSE->id,'caller'=>$PAGE->url));
+       //$mform->addElement('static', 'selectset', get_string('selectset', 'quizlet'), html_writer::link($ssurl,get_string('selectset', 'quizlet')));
+      $mform->addElement('static', 'selectset', get_string('selectset', 'quizlet'), $renderer->show_popup_page($ssurl,get_string('selectset', 'quizlet')));
       
       
       
       
 	  //showing the current quizlet set
-	  $mform->addElement('text', 'quizletset', get_string('quizletsetid', 'quizletimport'),array('size' => '64'));
+	  $mform->addElement('text', 'quizletset', get_string('quizletsetid', 'quizlet'),array('size' => '64'));
       $mform->setType('quizletset', PARAM_TEXT);   
-      $mform->addElement('text', 'quizletsettitle', get_string('quizletsettitle', 'quizletimport'),array('size' => '64'));
+      $mform->addElement('text', 'quizletsettitle', get_string('quizletsettitle', 'quizlet'),array('size' => '64'));
       $mform->setType('quizletsettitle', PARAM_TEXT); 
    //   $mform->setExpanded('selectsetheader'); 
    //   $mform->closeHeaderBefore('activitytype');
@@ -153,31 +153,31 @@ class mod_quizletimport_mod_form extends moodleform_mod {
   /*
 		//if along the way we got an error back from quizlet, lets display it.
 		if($qmessage){
-			$mform->addElement('static', 'quizleterror', get_string('quizleterror', 'quizletimport'), $qmessage);
+			$mform->addElement('static', 'quizleterror', get_string('quizleterror', 'quizlet'), $qmessage);
 		}
 		*/
 		
 		//what kind of quizlet activity are we going to display
-		$activities = array($qiz::TYPE_CARDS => get_string('acttype_flashcards', 'quizletimport'),
-				$qiz::TYPE_SCATTER=>get_string('acttype_scatter', 'quizletimport'),
-				$qiz::TYPE_SPACERACE=>get_string('acttype_spacerace', 'quizletimport'),
-				$qiz::TYPE_TEST=>get_string('acttype_test', 'quizletimport'),
-				$qiz::TYPE_SPELLER=>get_string('acttype_speller', 'quizletimport'),
-				$qiz::TYPE_LEARN=>get_string('acttype_learn', 'quizletimport'));
+		$activities = array($qiz::TYPE_CARDS => get_string('acttype_flashcards', 'quizlet'),
+				$qiz::TYPE_SCATTER=>get_string('acttype_scatter', 'quizlet'),
+				$qiz::TYPE_SPACERACE=>get_string('acttype_spacerace', 'quizlet'),
+				$qiz::TYPE_TEST=>get_string('acttype_test', 'quizlet'),
+				$qiz::TYPE_SPELLER=>get_string('acttype_speller', 'quizlet'),
+				$qiz::TYPE_LEARN=>get_string('acttype_learn', 'quizlet'));
 				
-		$select = $mform->addElement('select', 'activitytype', get_string('activitytype', 'quizletimport'), $activities);
+		$select = $mform->addElement('select', 'activitytype', get_string('activitytype', 'quizlet'), $activities);
 		
 		//Add a place to set a mimumum time after which the activity is recorded complete
-	   $mform->addElement('duration', 'mintime', get_string('mintime', 'quizletimport'));    
+	   $mform->addElement('duration', 'mintime', get_string('mintime', 'quizlet'));
        $mform->setDefault('mintime',0);
-	   $mform->addElement('static', 'mintimedetails', '',get_string('mintimedetails', 'quizletimport'));
+	   $mform->addElement('static', 'mintimedetails', '',get_string('mintimedetails', 'quizlet'));
        
        //show countdown timer
-	   $mform->addElement('selectyesno', 'showcountdown', get_string('showcountdown', 'quizletimport'));    
+	   $mform->addElement('selectyesno', 'showcountdown', get_string('showcountdown', 'quizlet'));
        $mform->setDefault('showcountdown',$config->def_showcountdown);
        
       //show completion tag
-	   $mform->addElement('selectyesno', 'showcompletion', get_string('showcompletion', 'quizletimport'));    
+	   $mform->addElement('selectyesno', 'showcompletion', get_string('showcompletion', 'quizlet'));
        $mform->setDefault('showcompletion',$config->def_showcompletion);
       
 

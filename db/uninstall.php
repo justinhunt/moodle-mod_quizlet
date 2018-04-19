@@ -18,7 +18,7 @@
 /**
  * @see uninstall_plugin()
  *
- * @package    mod_quizletimport
+ * @package    mod_quizlet
  * @copyright  2011 Your Name <your@email.adress>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,6 +26,6 @@
 /**
  * Custom uninstallation procedure
  */
-function xmldb_quizletimport_uninstall() {
+function xmldb_quizlet_uninstall() {
     return true;
 }

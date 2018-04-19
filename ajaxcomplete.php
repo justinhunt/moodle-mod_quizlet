@@ -21,7 +21,7 @@
  * You can have a rather longer description of the file as well,
  * if you like, and it can span multiple lines.
  *
- * @package    mod_quizletimport
+ * @package    mod_quizlet
  * @copyright  2011 Your Name
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -34,9 +34,9 @@ require_once(dirname(__FILE__).'/locallib.php');
 $id = optional_param('id', 0, PARAM_INT); // course_module ID, or
 
 if ($id) {
-    $cm         = get_coursemodule_from_id('quizletimport', $id, 0, false, MUST_EXIST);
+    $cm         = get_coursemodule_from_id('quizlet', $id, 0, false, MUST_EXIST);
     $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-    $quizletimport  = $DB->get_record('quizletimport', array('id' => $cm->instance), '*', MUST_EXIST);
+    $quizlet  = $DB->get_record('quizlet', array('id' => $cm->instance), '*', MUST_EXIST);
 } else {
     error('You must specify a course_module ID or an instance ID');
 }
@@ -46,14 +46,14 @@ $context = context_module::instance($cm->id);
 
 global $DB,$USER;
 
-$sql = "SELECT MAX(time) FROM {quizletimport_log} WHERE cmid=" . $cm->id
+$sql = "SELECT MAX(time) FROM {quizlet_log} WHERE cmid=" . $cm->id
 			. " AND course=" . $course->id 
 			. " AND userid=" . $USER->id 
 			. " AND action='view'";
 			
 $starttime = $DB->get_field_sql($sql);
 
-if($starttime && (time() - $starttime) > $quizletimport->mintime){
+if($starttime && (time() - $starttime) > $quizlet->mintime){
 	$completion = new completion_info($course);
 	$completion->set_module_viewed($cm);
 	$return =array('success'=>true);

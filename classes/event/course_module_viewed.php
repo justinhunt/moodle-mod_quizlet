@@ -17,18 +17,18 @@
 /**
  * The mod_page course module viewed event.
  *
- * @package    mod_quizletimport
+ * @package    mod_quizlet
  * @copyright  2014 Justin Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_quizletimport\event;
+namespace mod_quizlet\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The mod_quizletimport course module viewed event class.
+ * The mod_quizlet course module viewed event class.
  *
- * @package    mod_quizletimport
+ * @package    mod_quizlet
  * @since      Moodle 2.7
  * @copyright  2014 Justin Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -41,7 +41,7 @@ class course_module_viewed extends \core\event\course_module_viewed {
     protected function init() {
         $this->data['crud'] = 'r';
         $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
-        $this->data['objecttable'] = 'quizletimport';
+        $this->data['objecttable'] = 'quizlet';
     }
 }
 

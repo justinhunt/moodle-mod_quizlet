@@ -16,9 +16,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines backup_quizletimport_activity_task class
+ * Defines backup_quizlet_activity_task class
  *
- * @package     mod_quizletimport
+ * @package     mod_quizlet
  * @category    backup
  * @copyright   2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,12 +26,12 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->dirroot . '/mod/quizletimport/backup/moodle2/backup_quizletimport_stepslib.php');
+require_once($CFG->dirroot . '/mod/quizlet/backup/moodle2/backup_quizlet_stepslib.php');
 
 /**
  * Provides the steps to perform one complete backup of the Page instance
  */
-class backup_quizletimport_activity_task extends backup_activity_task {
+class backup_quizlet_activity_task extends backup_activity_task {
 
     /**
      * No specific settings for this activity
@@ -40,10 +40,10 @@ class backup_quizletimport_activity_task extends backup_activity_task {
     }
 
     /**
-     * Defines a backup step to store the instance data in the quizletimport.xml file
+     * Defines a backup step to store the instance data in the quizlet.xml file
      */
     protected function define_my_steps() {
-        $this->add_step(new backup_quizletimport_activity_structure_step('quizletimport_structure', 'quizletimport.xml'));
+        $this->add_step(new backup_quizlet_activity_structure_step('quizlet_structure', 'quizlet.xml'));
     }
 
     /**
@@ -57,13 +57,13 @@ class backup_quizletimport_activity_task extends backup_activity_task {
 
         $base = preg_quote($CFG->wwwroot,"/");
 
-        // Link to the list of quizletimports
-        $search="/(".$base."\/mod\/quizletimport\/index.php\?id\=)([0-9]+)/";
-        $content= preg_replace($search, '$@QUIZLETIMPORTINDEX*$2@$', $content);
+        // Link to the list of quizlets
+        $search="/(".$base."\/mod\/quizlet\/index.php\?id\=)([0-9]+)/";
+        $content= preg_replace($search, '$@QUIZLETINDEX*$2@$', $content);
 
-        // Link to quizletimport view by moduleid
-        $search="/(".$base."\/mod\/quizletimport\/view.php\?id\=)([0-9]+)/";
-        $content= preg_replace($search, '$@QUIZLETIMPORTVIEWBYID*$2@$', $content);
+        // Link to quizlet view by moduleid
+        $search="/(".$base."\/mod\/quizlet\/view.php\?id\=)([0-9]+)/";
+        $content= preg_replace($search, '$@QUIZLETVIEWBYID*$2@$', $content);
 
         return $content;
     }

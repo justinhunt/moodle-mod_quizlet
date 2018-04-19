@@ -17,10 +17,10 @@
 
 
 /**
- * English strings for quizletimport
+ * English strings for quizlet
  *
  *
- * @package    mod_quizletimport
+ * @package    mod_quizlet
  * @copyright  2014 Justin Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,11 +29,11 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['modulename'] = 'Quizlet Activity';
 $string['modulenameplural'] = 'Quizlet Activities';
-$string['modulename_help'] = 'Use the Quizlet module for... | The quizletimport module allows...';
-$string['quizletimportfieldset'] = 'Fieldset';
-$string['quizletimportname'] = 'Quizlet Activity name';
-$string['quizletimportname_help'] = 'This is the content of the help tooltip associated with the Quizlet activity. Markdown syntax is supported.';
-$string['quizletimport'] = 'Quizlet Activity';
+$string['modulename_help'] = 'Use the Quizlet module for... | The quizlet module allows...';
+$string['quizletfieldset'] = 'Fieldset';
+$string['quizletname'] = 'Quizlet Activity name';
+$string['quizletname_help'] = 'This is the content of the help tooltip associated with the Quizlet activity. Markdown syntax is supported.';
+$string['quizlet'] = 'Quizlet Activity';
 $string['pluginadministration'] = 'Quizlet Activity Administration';
 $string['pluginname'] = 'Quizlet Activity';
 
@@ -69,7 +69,7 @@ $string['completed'] = 'Activity Complete';
 $string['timeleft'] = 'Time till complete:';
 $string['showcountdown'] = 'Show Countdown to Completion';
 $string['showcompletion'] = 'Show Completion Label when Complete';
-$string['createquizletimport'] = 'Create Quizlet Activity';
+$string['createquizlet'] = 'Create Quizlet Activity';
 $string['quizletsetinput'] = 'Quizlet Set ID';
 $string['exportentriestoxml'] = 'Export quizlet set to Quiz (XML)';
 $string['exportfile'] = 'Export quizlet set to question import file';
@@ -92,8 +92,8 @@ $string['usethisset'] = 'Use this Set';
 $string['previewbelow'] = 'Preview Below';
 $string['quizletsetid'] = 'Quizlet Set ID';
 $string['quizletsettitle'] = 'Quizlet Set Title';
-$string['quizletimport:addinstance'] = 'Add a new Quizlet Import activity';
-$string['quizletimport:view'] = 'View Quizlet Import activity';
-$string['quizletimport:submit'] = 'Can submit Quizlet Import activity';
+$string['quizlet:addinstance'] = 'Add a new Quizlet Import activity';
+$string['quizlet:view'] = 'View Quizlet Import activity';
+$string['quizlet:submit'] = 'Can submit Quizlet Import activity';
 
 

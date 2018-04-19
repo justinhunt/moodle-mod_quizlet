@@ -22,12 +22,12 @@
 
 /**
  * Mod Quizlet Import renderer.
- * @package   mod_quizletimport
+ * @package   mod_quizlet
  * @copyright 2014 Justin Hunt (poodllsupport@gmail.com)
  * @author    Justin Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_quizletimport_renderer extends plugin_renderer_base {	
+class mod_quizlet_renderer extends plugin_renderer_base {
     
     
     function show_popup_page($fullurl, $linktext){
@@ -119,7 +119,7 @@ class mod_quizletimport_renderer extends plugin_renderer_base {
         function display_preview_iframe($iframename){
             //add our preview iframe box
             //set up js
-            //$iframename = "quizletimport_sampleset_flashcards";
+            //$iframename = "quizlet_sampleset_flashcards";
             $opts = array();
             $opts['iframename'] = $iframename;
             $opts['width'] = 550;

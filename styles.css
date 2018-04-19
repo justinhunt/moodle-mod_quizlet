@@ -1,27 +1,27 @@
 
 
 /* Countdown timer. */
-#quizletimport-completed {display: none; margin-top: 1em;} 
-#quizletimport-timer {display: none; margin-top: 1em;} 
-#quizletimport-time-left {font-weight: bold;}
-#quizletimport-timer.timeleft15 {background: #ffffff;}
-#quizletimport-timer.timeleft14 {background: #eeffee;}
-#quizletimport-timer.timeleft13 {background: #ddffdd;}
-#quizletimport-timer.timeleft12 {background: #ccffcc;}
-#quizletimport-timer.timeleft11 {background: #bbffbb;}
-#quizletimport-timer.timeleft10 {background: #aaffaa;}
-#quizletimport-timer.timeleft9 {background: #99ff99;}
-#quizletimport-timer.timeleft8 {background: #88ff88;}
-#quizletimport-timer.timeleft7 {background: #77ff77;}
-#quizletimport-timer.timeleft6 {background: #66ff66;}
-#quizletimport-timer.timeleft5 {background: #55ff55;}
-#quizletimport-timer.timeleft4 {background: #44ff44;}
-#quizletimport-timer.timeleft3 {background: #33ff33;}
-#quizletimport-timer.timeleft2 {background: #22ff22;}
-#quizletimport-timer.timeleft1 {background: #11ff11;}
-#quizletimport-timer.timeleft0 {background: #00ff00;}
-#quizletimport-timer {text-align: center; margin-top: 1em;}
-#quizletimport-completed {text-align: center; margin-top: 1em; background: #F4C63f;}
+#quizlet-completed {display: none; margin-top: 1em;}
+#quizlet-timer {display: none; margin-top: 1em;}
+#quizlet-time-left {font-weight: bold;}
+#quizlet-timer.timeleft15 {background: #ffffff;}
+#quizlet-timer.timeleft14 {background: #eeffee;}
+#quizlet-timer.timeleft13 {background: #ddffdd;}
+#quizlet-timer.timeleft12 {background: #ccffcc;}
+#quizlet-timer.timeleft11 {background: #bbffbb;}
+#quizlet-timer.timeleft10 {background: #aaffaa;}
+#quizlet-timer.timeleft9 {background: #99ff99;}
+#quizlet-timer.timeleft8 {background: #88ff88;}
+#quizlet-timer.timeleft7 {background: #77ff77;}
+#quizlet-timer.timeleft6 {background: #66ff66;}
+#quizlet-timer.timeleft5 {background: #55ff55;}
+#quizlet-timer.timeleft4 {background: #44ff44;}
+#quizlet-timer.timeleft3 {background: #33ff33;}
+#quizlet-timer.timeleft2 {background: #22ff22;}
+#quizlet-timer.timeleft1 {background: #11ff11;}
+#quizlet-timer.timeleft0 {background: #00ff00;}
+#quizlet-timer {text-align: center; margin-top: 1em;}
+#quizlet-completed {text-align: center; margin-top: 1em; background: #F4C63f;}
 
 .cancellink {
 	padding-left: 10px;

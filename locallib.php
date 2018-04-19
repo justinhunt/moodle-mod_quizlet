@@ -16,12 +16,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Internal library of functions for module quizletimport
+ * Internal library of functions for module quizlet
  *
- * All the quizletimport specific functions, needed to implement the module
+ * All the quizlet specific functions, needed to implement the module
  * logic, should go here. Never include this file from your lib.php!
  *
- * @package    mod_quizletimport
+ * @package    mod_quizlet
  * @copyright  2014 Justin Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -37,7 +37,7 @@ require_once(dirname(__FILE__).'/quizlet.php');
 /**
  * File browsing support class
  */
-class quizletimport_helper {
+class quizlet_helper {
 
     //$quizlet = null;
     //$course = null;
@@ -48,7 +48,7 @@ class quizletimport_helper {
      *
      * @param array $options
      */
-    public function __construct($quizletimport,$course,$cm) {
+    public function __construct($quizlet,$course,$cm) {
         global $CFG;
 
         $args = array(
@@ -58,7 +58,7 @@ class quizletimport_helper {
         $this->quizlet = new quizlet($args);
         $this->course = $course;
         $this->cm = $cm;
-        $this->qi = $quizletimport;
+        $this->qi = $quizlet;
     }
     
       /**
@@ -67,7 +67,7 @@ class quizletimport_helper {
      */
     public function initialise_timer($page) {
 		if($this->qi->mintime==0){
-			$config = get_config('quizletimport');
+			$config = get_config('quizlet');
 			switch($this->qi->activitytype){
 				case quizlet::TYPE_SCATTER:
 					$this->qi->mintime = $config->def_scatter_mintime;
@@ -91,7 +91,7 @@ class quizletimport_helper {
 			}
 		}
         $options = array($this->qi->mintime,$this->qi->showcountdown>0,$this->cm->id,$this->qi->showcompletion>0,$this->is_complete());
-        $page->requires->js_init_call('M.mod_quizletimport.timer.init', $options, false);
+        $page->requires->js_init_call('M.mod_quizlet.timer.init', $options, false);
     }
     
     public function is_complete(){
@@ -110,7 +110,7 @@ class quizletimport_helper {
      * @return string HTML content.
      */
     public function fetch_completed_tag() {
-        return html_writer::tag('div',  get_string('completed', 'quizletimport'),array('id' => 'quizletimport-completed'));
+        return html_writer::tag('div',  get_string('completed', 'quizlet'),array('id' => 'quizlet-completed'));
         
     }
     
@@ -119,9 +119,9 @@ class quizletimport_helper {
      * @return string HTML content.
      */
     public function fetch_countdown_timer() {
-        return html_writer::tag('div', get_string('timeleft', 'quizletimport') . ' ' .
-            html_writer::tag('span', '', array('id' => 'quizletimport-time-left')),
-            array('id' => 'quizletimport-timer', 'role' => 'timer',
+        return html_writer::tag('div', get_string('timeleft', 'quizlet') . ' ' .
+            html_writer::tag('span', '', array('id' => 'quizlet-time-left')),
+            array('id' => 'quizlet-timer', 'role' => 'timer',
                 'aria-atomic' => 'true', 'aria-relevant' => 'text'));
     }
     

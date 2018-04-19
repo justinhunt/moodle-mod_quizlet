@@ -16,12 +16,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Internal library of functions for module quizletimport
+ * Internal library of functions for module quizlet
  *
- * All the quizletimport specific functions, needed to implement the module
+ * All the quizlet specific functions, needed to implement the module
  * logic, should go here. Never include this file from your lib.php!
  *
- * @package    mod_quizletimport
+ * @package    mod_quizlet
  * @copyright  2014 Justin Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -85,7 +85,7 @@ class quizlet {
     	 global $CFG;
 
 
-		 $config = get_config('quizletimport');
+		 $config = get_config('quizlet');
          $args = array(
 			'api_scope' => 'read%20write_set',
         	);
@@ -303,7 +303,7 @@ class quizlet {
      */
 	public function fetch_embed_code($quizletset, $activitytype, $useheight=false, $usewidth=false){
 		$iframe = "<iframe src=\"https://quizlet.com/@@quizletset@@/@@type@@/embedv2\" height=\"@@height@@\" width=\"@@width@@\" style=\"border:0;\"></iframe>";
-		$config = get_config('quizletimport');
+		$config = get_config('quizlet');
 		
 		switch($activitytype){
 			
@@ -405,7 +405,7 @@ class quizlet {
 	
 	//do a basic search from the quizlet_search_form
 	public function do_search($param_searchtext='',$param_searchtype=''){
-		if($param_searchtext =='' || $param_searchtype== get_string("searchmysets", "quizletimport")){
+		if($param_searchtext =='' || $param_searchtype== get_string("searchmysets", "quizlet")){
 			$endpoint = 'users/@username@/sets';
 			$params = null;
 			$mysets = $this->request($endpoint,$params);
@@ -414,17 +414,17 @@ class quizlet {
 			}
 		}else{
 			switch ($param_searchtype){	
-				case get_string("searchusers", "quizletimport"):
+				case get_string("searchusers", "quizlet"):
 					$params=array();
 					$params['creator']=$param_searchtext;
 					$endpoint = 'search/sets';
 					break;
-				case get_string("searchterms", "quizletimport"):
+				case get_string("searchterms", "quizlet"):
 					$params=array();
 					$params['term']=$param_searchtext;
 					$endpoint = 'search/sets';
 					break;	
-				case get_string("searchtitles", "quizletimport"):
+				case get_string("searchtitles", "quizlet"):
 				default:
 					$params=array();
 					$params['q']=$param_searchtext;
@@ -451,16 +451,16 @@ class quizlet_search_form extends moodleform {
 
         $mform =& $this->_form;
 
-     $mform->addElement('text', 'searchtext', get_string('searchtext', 'quizletimport'),array('size'=>64));
+     $mform->addElement('text', 'searchtext', get_string('searchtext', 'quizlet'),array('size'=>64));
      $mform->setType('searchtext',PARAM_TEXT);
      $mform->addElement('hidden', 'courseid');
      $mform->addElement('hidden', 'caller');
      $mform->setType('courseid',PARAM_INT);
      $mform->setType('caller',PARAM_URL);
      $buttons = array(); 
-     $buttons[] =& $mform->createElement('submit', 'searchtype',  get_string("searchmysets", "quizletimport"));
-     $buttons[] =& $mform->createElement('submit', 'searchtype',  get_string("searchtitles", "quizletimport"));
-     $buttons[] =& $mform->createElement('submit', 'searchtype',  get_string("searchusers", "quizletimport"));
+     $buttons[] =& $mform->createElement('submit', 'searchtype',  get_string("searchmysets", "quizlet"));
+     $buttons[] =& $mform->createElement('submit', 'searchtype',  get_string("searchtitles", "quizlet"));
+     $buttons[] =& $mform->createElement('submit', 'searchtype',  get_string("searchusers", "quizlet"));
       $mform->addElement('group', 'buttonsgrp', '', $buttons, ' ', false);
 
     }
