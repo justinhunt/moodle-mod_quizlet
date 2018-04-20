@@ -92,8 +92,9 @@ $string['usethisset'] = 'Use this Set';
 $string['previewbelow'] = 'Preview Below';
 $string['quizletsetid'] = 'Quizlet Set ID';
 $string['quizletsettitle'] = 'Quizlet Set Title';
-$string['quizlet:addinstance'] = 'Add a new Quizlet Import activity';
-$string['quizlet:view'] = 'View Quizlet Import activity';
-$string['quizlet:submit'] = 'Can submit Quizlet Import activity';
+$string['quizlet:addinstance'] = 'Add a new Quizlet activity';
+$string['quizlet:view'] = 'View Quizlet activity';
+$string['quizlet:submit'] = 'Can submit Quizlet activity';
+$string['privacy:metadata'] = 'The Poodll Quizlet activity plugin does store personal data.';
 
 
